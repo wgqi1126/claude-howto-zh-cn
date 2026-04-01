@@ -6,3 +6,4 @@ alwaysApply: true
 # Cursor Project Conventions
 
 - 默认使用简体中文回复、说明、总结和协作沟通。
+- 当用户仅输入简短确认（如 `1`、`ok`、`好`、`行`、`推送` 等）且上下文明显是在跟进「提交并推送」类操作时，直接执行 `git add` → `git commit`（中文说明）→ `git push`，无需再追问意图。
