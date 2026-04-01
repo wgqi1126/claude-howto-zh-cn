@@ -3,41 +3,40 @@
 # dependencies = ["ebooklib", "markdown", "beautifulsoup4", "httpx", "pillow", "tenacity"]
 # ///
 """
-Build an EPUB from the Claude How-To markdown files.
+根据 Claude How-To 的 Markdown 文件构建 EPUB。
 
-Usage:
-    Run from the repository root directory:
+用法：
+    在仓库根目录执行：
         ./scripts/build_epub.py
 
-    Or run directly with Python/uv:
+    或使用 Python/uv 直接运行：
         uv run scripts/build_epub.py
         python scripts/build_epub.py
 
-    Command-line options:
-        --root, -r      Root directory containing markdown files (default: repo root)
-        --output, -o    Output EPUB file path (default: <root>/claude-howto-guide.epub)
-        --verbose, -v   Enable verbose logging
-        --timeout       Timeout for API requests in seconds (default: 30)
-        --max-concurrent Maximum concurrent API requests (default: 10)
+    命令行选项：
+        --root, -r      包含 Markdown 的根目录（默认：仓库根目录）
+        --output, -o    输出的 EPUB 文件路径（默认：<root>/claude-howto-guide.epub）
+        --verbose, -v   启用详细日志
+        --timeout       API 请求超时（秒，默认：30）
+        --max-concurrent 最大并发 API 请求数（默认：10）
 
-    The script uses inline script dependencies (PEP 723), so uv will
-    automatically install required packages in an isolated environment.
+    本脚本使用内联脚本依赖（PEP 723），uv 会在隔离环境中自动安装所需包。
 
-Output:
-    Creates 'claude-howto-guide.epub' in the repository root directory.
+输出：
+    在仓库根目录生成 `claude-howto-guide.epub`。
 
-Features:
-    - Organizes chapters by folder structure (01-slash-commands, etc.)
-    - Renders Mermaid diagrams as PNG images via Kroki.io API (async concurrent)
-    - Generates a cover image from the project logo
-    - Converts internal markdown links to EPUB chapter references
-    - Handles SVG images by replacing with styled placeholders
-    - Strict error mode: fails if any diagram cannot be rendered
+功能：
+    - 按目录结构组织章节（01-slash-commands 等）
+    - 通过 Kroki.io API 将 Mermaid 图表渲染为 PNG（异步并发）
+    - 根据项目 Logo 生成封面图
+    - 将 Markdown 内部链接转换为 EPUB 章节引用
+    - 对 SVG 图片使用带样式的占位符替换
+    - 严格模式：任一图表无法渲染则失败
 
-Requirements:
-    - uv (recommended) or Python 3.10+ with dependencies installed
-    - Internet connection for Mermaid diagram rendering
-    - Repository structure with markdown files and claude-howto-logo.png
+依赖：
+    - uv（推荐）或已安装依赖的 Python 3.10+
+    - 渲染 Mermaid 需要网络连接
+    - 仓库内需有 Markdown 文件与 claude-howto-logo.png
 """
 
 from __future__ import annotations
@@ -68,68 +67,68 @@ from tenacity import (
 )
 
 # =============================================================================
-# Custom Exceptions
+# 自定义异常
 # =============================================================================
 
 
 class EPUBBuildError(Exception):
-    """Base exception for EPUB build errors."""
+    """EPUB 构建错误的基类。"""
 
     pass
 
 
 class MermaidRenderError(EPUBBuildError):
-    """Error rendering Mermaid diagram."""
+    """渲染 Mermaid 图表时出错。"""
 
     pass
 
 
 class ValidationError(EPUBBuildError):
-    """Error validating input or output."""
+    """校验输入或输出时出错。"""
 
     pass
 
 
 class CoverGenerationError(EPUBBuildError):
-    """Error generating cover image."""
+    """生成封面图时出错。"""
 
     pass
 
 
 # =============================================================================
-# Configuration and State
+# 配置与状态
 # =============================================================================
 
 
 @dataclass
 class EPUBConfig:
-    """Configuration for EPUB generation."""
+    """EPUB 生成配置。"""
 
-    # Paths
+    # 路径
     root_path: Path
     output_path: Path
     logo_path: Path | None = None
 
-    # EPUB Metadata
+    # EPUB 元数据
     identifier: str = "claude-howto-guide"
     title: str = "Claude Code How-To Guide"
     language: str = "en"
     author: str = "Claude Code Community"
 
-    # Cover Settings
+    # 封面设置
     cover_width: int = 600
     cover_height: int = 900
     cover_bg_color: tuple[int, int, int] = (26, 26, 46)
     cover_title_color: tuple[int, int, int] = (78, 205, 196)
     cover_subtitle_color: tuple[int, int, int] = (168, 178, 209)
 
-    # Network Settings
+    # 网络设置
     kroki_base_url: str = "https://kroki.io"
     request_timeout: float = 30.0
     max_retries: int = 3
     max_concurrent_requests: int = 10
 
-    # Font paths (platform-specific)
+    # 字体路径（因平台而异）
     title_font_paths: list[str] = field(
         default_factory=lambda: [
             "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
@@ -150,7 +149,7 @@ class EPUBConfig:
 
 @dataclass
 class BuildState:
-    """Mutable state for the build process."""
+    """构建过程的可变状态。"""
 
     mermaid_cache: dict[str, tuple[bytes, str]] = field(default_factory=dict)
     mermaid_counter: int = 0
@@ -158,7 +157,7 @@ class BuildState:
     path_to_chapter: dict[str, str] = field(default_factory=dict)
 
     def reset(self) -> None:
-        """Reset all state for a fresh build."""
+        """重置状态，用于全新构建。"""
         self.mermaid_cache.clear()
         self.mermaid_counter = 0
         self.mermaid_added_to_book.clear()
@@ -167,7 +166,7 @@ class BuildState:
 
 @dataclass
 class ChapterInfo:
-    """Information about a chapter for processing."""
+    """章节处理用信息。"""
 
     file_path: Path
     display_name: str
@@ -178,12 +177,12 @@ class ChapterInfo:
 
 
 # =============================================================================
-# Logging Setup
+# 日志配置
 # =============================================================================
 
 
 def setup_logging(verbose: bool = False) -> logging.Logger:
-    """Configure logging for the build process."""
+    """为构建过程配置日志。"""
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
         level=level,
@@ -194,35 +193,35 @@ def setup_logging(verbose: bool = False) -> logging.Logger:
 
 
 # =============================================================================
-# Input Validation
+# 输入校验
 # =============================================================================
 
 
 def validate_inputs(config: EPUBConfig, logger: logging.Logger) -> None:
-    """Validate all inputs before starting the build."""
+    """在开始构建前校验所有输入。"""
     errors = []
 
-    # Check root path exists
+    # 检查根路径是否存在
     if not config.root_path.exists():
         errors.append(f"Root path does not exist: {config.root_path}")
     elif not config.root_path.is_dir():
         errors.append(f"Root path is not a directory: {config.root_path}")
 
-    # Check output path is writable
+    # 检查输出路径是否可写
     output_dir = config.output_path.parent
     if not output_dir.exists():
         errors.append(f"Output directory does not exist: {output_dir}")
     elif not os.access(output_dir, os.W_OK):
         errors.append(f"Output directory is not writable: {output_dir}")
 
-    # Check logo if specified
+    # 若指定了 Logo 则检查
     logo_path = config.logo_path or (config.root_path / "claude-howto-logo.png")
     if not logo_path.exists():
         logger.warning(
-            f"Logo file not found: {logo_path}. Cover will be generated without logo."
+            f"未找到 Logo 文件：{logo_path}。将生成不含 Logo 的封面。"
         )
 
-    # Verify at least some markdown files exist
+    # 至少应存在若干 Markdown 文件
     md_files = list(config.root_path.glob("**/*.md"))
     if not md_files:
         errors.append(f"No markdown files found in {config.root_path}")
@@ -234,24 +233,23 @@ def validate_inputs(config: EPUBConfig, logger: logging.Logger) -> None:
 
 
 # =============================================================================
-# Mermaid Rendering (Async with Retry)
+# Mermaid 渲染（异步 + 重试）
 # =============================================================================
 
 
 def sanitize_mermaid(mermaid_code: str) -> str:
-    """Sanitize mermaid code to avoid markdown parsing issues.
+    """清理 mermaid 代码，减轻 Markdown 解析问题。
 
-    Mermaid's markdown-in-nodes feature incorrectly interprets numbered
-    lists (e.g., "1. Item") inside node labels. This escapes the period
-    to prevent that.
+    Mermaid 在节点内的 markdown 特性会把编号列表（如 "1. Item"）
+    误解析；此处对句点转义以避免该问题。
     """
-    # Escape numbered list patterns inside brackets: [1. Text] -> [1\. Text]
+    # 对方括号内的编号列表转义：[1. Text] -> [1\. Text]
     sanitized = re.sub(r'\[(["\']?)(\d+)\.(\s)', r"[\1\2\\.\3", mermaid_code)
     return sanitized
 
 
 class MermaidRenderer:
-    """Async renderer for Mermaid diagrams via Kroki.io API."""
+    """通过 Kroki.io API 异步渲染 Mermaid 图表。"""
 
     def __init__(
         self, config: EPUBConfig, state: BuildState, logger: logging.Logger
@@ -264,21 +262,21 @@ class MermaidRenderer:
     async def _fetch_single(
         self, client: httpx.AsyncClient, mermaid_code: str, index: int
     ) -> tuple[str, tuple[bytes, str]]:
-        """Fetch a single Mermaid diagram with retry logic."""
+        """获取单个 Mermaid 图表（含重试逻辑）。"""
         cache_key = mermaid_code.strip()
 
-        # Check cache first
+        # 先查缓存
         if cache_key in self.state.mermaid_cache:
-            self.logger.debug(f"Cache hit for diagram {index}")
+            self.logger.debug(f"图表 {index} 缓存命中")
             return cache_key, self.state.mermaid_cache[cache_key]
 
-        # Rate limit with semaphore
+        # 用信号量限流
         assert self._semaphore is not None
         async with self._semaphore:
             result = await self._fetch_with_retry(client, mermaid_code, index)
             if result is None:
                 raise MermaidRenderError(
-                    f"Failed to render Mermaid diagram {index} after {self.config.max_retries} attempts"
+                    f"在 {self.config.max_retries} 次尝试后仍无法渲染 Mermaid 图表 {index}"
                 )
             return cache_key, result
 
@@ -291,13 +289,13 @@ class MermaidRenderer:
     async def _fetch_with_retry(
         self, client: httpx.AsyncClient, mermaid_code: str, index: int
     ) -> tuple[bytes, str] | None:
-        """Fetch diagram with retry logic."""
+        """带重试逻辑获取图表。"""
         try:
             compressed = zlib.compress(mermaid_code.encode("utf-8"), level=9)
             encoded = base64.urlsafe_b64encode(compressed).decode("ascii")
             url = f"{self.config.kroki_base_url}/mermaid/png/{encoded}"
 
-            self.logger.debug(f"Fetching diagram {index}...")
+            self.logger.debug(f"正在获取图表 {index}...")
             response = await client.get(url, timeout=self.config.request_timeout)
 
             if response.status_code == 200:
@@ -306,29 +304,29 @@ class MermaidRenderer:
                 result = (response.content, img_name)
                 cache_key = mermaid_code.strip()
                 self.state.mermaid_cache[cache_key] = result
-                self.logger.info(f"Rendered diagram {index} -> {img_name}")
+                self.logger.info(f"已渲染图表 {index} -> {img_name}")
                 return result
             else:
                 self.logger.warning(
-                    f"Kroki API returned {response.status_code} for diagram {index}"
+                    f"Kroki API 对图表 {index} 返回状态码 {response.status_code}"
                 )
                 raise MermaidRenderError(
-                    f"Kroki API returned {response.status_code} for diagram {index}"
+                    f"Kroki API 对图表 {index} 返回状态码 {response.status_code}"
                 )
 
         except httpx.TimeoutException:
-            self.logger.warning(f"Timeout fetching diagram {index}, will retry...")
+            self.logger.warning(f"获取图表 {index} 超时，将重试...")
             raise
         except httpx.NetworkError as e:
             self.logger.warning(
-                f"Network error for diagram {index}: {e}, will retry..."
+                f"图表 {index} 网络错误：{e}，将重试..."
             )
             raise
 
     async def render_all(
         self, diagrams: list[tuple[int, str]]
     ) -> dict[str, tuple[bytes, str]]:
-        """Render all Mermaid diagrams concurrently."""
+        """并发渲染全部 Mermaid 图表。"""
         self._semaphore = asyncio.Semaphore(self.config.max_concurrent_requests)
         results: dict[str, tuple[bytes, str]] = {}
 
@@ -342,9 +340,9 @@ class MermaidRenderer:
                 for idx, code in diagrams
             ]
 
-            self.logger.info(f"Fetching {len(tasks)} Mermaid diagrams concurrently...")
+            self.logger.info(f"正在并发获取 {len(tasks)} 个 Mermaid 图表...")
 
-            # Use gather with return_exceptions=False for strict mode
+            # 使用 gather 且 return_exceptions=False，保持严格模式
             completed = await asyncio.gather(*tasks)
 
             for cache_key, data in completed:
@@ -352,7 +350,7 @@ class MermaidRenderer:
 
         success_count = len(results)
         self.logger.info(
-            f"Successfully rendered {success_count}/{len(diagrams)} diagrams"
+            f"成功渲染 {success_count}/{len(diagrams)} 个图表"
         )
         return results
 
@@ -360,7 +358,7 @@ class MermaidRenderer:
 def extract_all_mermaid_blocks(
     md_files: list[tuple[Path, str]], logger: logging.Logger
 ) -> list[tuple[int, str]]:
-    """Extract all unique Mermaid code blocks from markdown files."""
+    """从 Markdown 文件中提取全部不重复的 Mermaid 代码块。"""
     pattern = r"```mermaid\n(.*?)```"
     seen: set[str] = set()
     diagrams: list[tuple[int, str]] = []
@@ -376,19 +374,19 @@ def extract_all_mermaid_blocks(
                     counter += 1
                     diagrams.append((counter, code))
         except UnicodeDecodeError as e:
-            logger.warning(f"Failed to read {file_path}: {e}")
+            logger.warning(f"无法读取 {file_path}：{e}")
 
-    logger.info(f"Found {len(diagrams)} unique Mermaid diagrams")
+    logger.info(f"共发现 {len(diagrams)} 个不重复的 Mermaid 图表")
     return diagrams
 
 
 # =============================================================================
-# Chapter Collection (Single-Pass)
+# 章节收集（单次遍历）
 # =============================================================================
 
 
 def get_chapter_order() -> list[tuple[str, str]]:
-    """Define the order of chapters based on folder structure."""
+    """按目录结构定义章节顺序。"""
     return [
         ("README.md", "Introduction"),
         ("LEARNING-ROADMAP.md", "Learning Roadmap"),
@@ -408,21 +406,21 @@ def get_chapter_order() -> list[tuple[str, str]]:
 
 
 def collect_folder_files(folder_path: Path) -> list[tuple[Path, str]]:
-    """Collect all markdown files from a folder, README first."""
+    """收集文件夹内全部 Markdown，README 优先。"""
     files: list[tuple[Path, str]] = []
 
-    # Get README first if it exists
+    # 若存在则先加入 README
     readme = folder_path / "README.md"
     if readme.exists():
-        files.append((readme, "Overview"))
+        files.append((readme, "概述"))
 
-    # Get all other markdown files
+    # 其余 .md 文件
     for md_file in sorted(folder_path.glob("*.md")):
         if md_file.name != "README.md":
             title = md_file.stem.replace("-", " ").replace("_", " ").title()
             files.append((md_file, title))
 
-    # Recursively get subfolders
+    # 递归子目录
     for subfolder in sorted(folder_path.iterdir()):
         if subfolder.is_dir() and not subfolder.name.startswith("."):
             subfiles = collect_folder_files(subfolder)
@@ -440,7 +438,7 @@ def collect_folder_files(folder_path: Path) -> list[tuple[Path, str]]:
 
 
 class ChapterCollector:
-    """Collects and organizes chapter information in a single pass."""
+    """单次遍历收集并整理章节信息。"""
 
     def __init__(self, root_path: Path, state: BuildState) -> None:
         self.root_path = root_path
@@ -449,7 +447,7 @@ class ChapterCollector:
     def collect_all_chapters(
         self, chapter_order: list[tuple[str, str]]
     ) -> list[ChapterInfo]:
-        """Collect all chapters and build path mapping in one pass."""
+        """一次遍历收集全部章节并建立路径映射。"""
         chapters: list[ChapterInfo] = []
         chapter_num = 0
 
@@ -483,7 +481,7 @@ class ChapterCollector:
     def _collect_folder(
         self, folder_path: Path, item: str, display_name: str, base_chapter_num: int
     ) -> list[ChapterInfo]:
-        """Collect chapters from a folder."""
+        """从目录收集章节。"""
         folder_files = collect_folder_files(folder_path)
         if not folder_files:
             return []
@@ -491,7 +489,7 @@ class ChapterCollector:
         chapter_num = base_chapter_num + 1
         chapters: list[ChapterInfo] = []
 
-        # Map folder itself
+        # 映射目录本身
         first_filename = f"chap_{chapter_num:02d}_00.xhtml"
         self.state.path_to_chapter[item] = first_filename
         self.state.path_to_chapter[item.rstrip("/")] = first_filename
@@ -516,30 +514,30 @@ class ChapterCollector:
 
 
 # =============================================================================
-# Cover Image Generation
+# 封面图生成
 # =============================================================================
 
 
 def load_font(
     font_paths: list[str], size: int, logger: logging.Logger
 ) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    """Load a font from a list of paths, with fallback to default."""
+    """从候选路径列表加载字体，失败则回退到默认字体。"""
     for font_path in font_paths:
         try:
             font = ImageFont.truetype(font_path, size)
-            logger.debug(f"Loaded font: {font_path}")
+            logger.debug(f"已加载字体：{font_path}")
             return font
         except OSError:
             continue
 
-    logger.warning("No custom fonts found, using default font")
+    logger.warning("未找到自定义字体，使用默认字体")
     return ImageFont.load_default()
 
 
 def _add_logo_to_cover(
     cover: Image.Image, logo_path: Path, config: EPUBConfig, logger: logging.Logger
 ) -> None:
-    """Add logo to cover image."""
+    """将 Logo 绘制到封面上。"""
     with Image.open(logo_path) as logo:
         target_width = config.cover_width - 60
         scale_factor = target_width / logo.width
@@ -556,7 +554,7 @@ def _add_logo_to_cover(
         logo_x = (config.cover_width - logo_scaled.width) // 2
         logo_y = config.cover_height - logo_scaled.height - 80
         cover.paste(logo_scaled, (logo_x, logo_y))
-        logger.debug(f"Added logo from {logo_path}")
+        logger.debug(f"已从 {logo_path} 添加 Logo")
 
 
 def _draw_text_centered(
@@ -568,7 +566,7 @@ def _draw_text_centered(
     y_start: int,
     line_spacing: int,
 ) -> int:
-    """Draw centered multi-line text, return final y position."""
+    """绘制居中多行文本，返回最终 y 坐标。"""
     y_offset = y_start
     for line in text.split("\n"):
         bbox = draw.textbbox((0, 0), line, font=font)
@@ -582,28 +580,28 @@ def _draw_text_centered(
 def create_cover_image(
     config: EPUBConfig,
     logger: logging.Logger,
-    title: str = "Claude Code\nHow-To Guide",
-    subtitle: str = "Complete Guide to Claude Code Features",
+    title: str = "Claude Code\nHow-To 指南",
+    subtitle: str = "Claude Code 功能完整指南",
 ) -> bytes:
-    """Create a cover image with proper error handling."""
+    """生成封面图，含错误处理。"""
     try:
         cover = Image.new(
             "RGB", (config.cover_width, config.cover_height), config.cover_bg_color
         )
         draw = ImageDraw.Draw(cover)
 
-        # Load fonts once
+        # 字体只加载一次
         title_font = load_font(config.title_font_paths, 72, logger)
         subtitle_font = load_font(config.subtitle_font_paths, 24, logger)
 
-        # Add logo if available
+        # 若有 Logo 则添加
         logo_path = config.logo_path or (config.root_path / "claude-howto-logo.png")
         if logo_path.exists():
             _add_logo_to_cover(cover, logo_path, config, logger)
         else:
-            logger.warning("Logo not found, creating text-only cover")
+            logger.warning("未找到 Logo，生成纯文字封面")
 
-        # Draw title
+        # 标题
         y_after_title = _draw_text_centered(
             draw,
             title,
@@ -614,7 +612,7 @@ def create_cover_image(
             line_spacing=90,
         )
 
-        # Draw subtitle
+        # 副标题
         _draw_text_centered(
             draw,
             subtitle,
@@ -627,23 +625,23 @@ def create_cover_image(
 
         buffer = BytesIO()
         cover.save(buffer, format="PNG", optimize=True)
-        logger.info("Cover image generated successfully")
+        logger.info("封面图生成成功")
         return buffer.getvalue()
 
     except Exception as e:
-        logger.error(f"Failed to create cover image: {e}")
-        raise CoverGenerationError(f"Cover generation failed: {e}") from e
+        logger.error(f"创建封面图失败：{e}")
+        raise CoverGenerationError(f"封面生成失败：{e}") from e
 
 
 # =============================================================================
-# HTML Generation
+# HTML 生成
 # =============================================================================
 
 
 def create_chapter_html(
     display_name: str, file_title: str, html_content: str, is_overview: bool = False
 ) -> str:
-    """Create chapter HTML with proper escaping."""
+    """生成章节 HTML，并做适当转义。"""
     safe_display = html.escape(display_name)
     safe_title = html.escape(file_title)
 
@@ -674,7 +672,7 @@ def create_chapter_html(
 
 
 def handle_svg_image(src: str, alt: str, logger: logging.Logger) -> str:
-    """Handle SVG images with a styled placeholder."""
+    """用带样式的占位符处理 SVG 图片。"""
     placeholder = f"""
     <div class="svg-placeholder" style="
         border: 1px dashed #ccc;
@@ -684,25 +682,25 @@ def handle_svg_image(src: str, alt: str, logger: logging.Logger) -> str:
         border-radius: 4px;
         margin: 1em 0;
     ">
-        <p><em>[SVG Image: {html.escape(alt)}]</em></p>
+        <p><em>[SVG 图片：{html.escape(alt)}]</em></p>
         <p style="font-size: 0.8em; color: #666;">
-            Original: {html.escape(src)}
+            原始地址：{html.escape(src)}
         </p>
     </div>
     """
-    logger.debug(f"Replaced SVG image: {src}")
+    logger.debug(f"已替换 SVG 图片：{src}")
     return placeholder
 
 
 # =============================================================================
-# Markdown Processing
+# Markdown 处理
 # =============================================================================
 
 
 def process_mermaid_blocks(
     md_content: str, book: epub.EpubBook, state: BuildState, logger: logging.Logger
 ) -> str:
-    """Find mermaid code blocks and replace with image references."""
+    """查找 mermaid 代码块并替换为图片引用。"""
     pattern = r"```mermaid\n(.*?)```"
 
     def replace_mermaid(match: re.Match[str]) -> str:
@@ -711,7 +709,7 @@ def process_mermaid_blocks(
 
         if cache_key in state.mermaid_cache:
             img_data, img_name = state.mermaid_cache[cache_key]
-            # Only add image to book if not already added
+            # 仅在尚未加入电子书时再添加图片
             if img_name not in state.mermaid_added_to_book:
                 img_item = epub.EpubItem(
                     uid=img_name.replace(".", "_"),
@@ -721,11 +719,11 @@ def process_mermaid_blocks(
                 )
                 book.add_item(img_item)
                 state.mermaid_added_to_book.add(img_name)
-            return f"\n![Diagram](images/{img_name})\n"
+            return f"\n![图表](images/{img_name})\n"
         else:
-            # This should not happen in strict mode since we pre-fetch all diagrams
-            logger.error("Mermaid diagram not found in cache")
-            raise MermaidRenderError("Mermaid diagram not found in cache")
+            # 严格模式下预先拉取全部图表后不应出现
+            logger.error("缓存中未找到 Mermaid 图表")
+            raise MermaidRenderError("缓存中未找到 Mermaid 图表")
 
     return re.sub(pattern, replace_mermaid, md_content, flags=re.DOTALL)
 
@@ -733,7 +731,7 @@ def process_mermaid_blocks(
 def convert_internal_links(
     html_content: str, current_file: Path, root_path: Path, state: BuildState
 ) -> str:
-    """Convert markdown links to internal EPUB chapter links."""
+    """将 Markdown 链接转为 EPUB 内部章节链接。"""
     soup = BeautifulSoup(html_content, "html.parser")
 
     for link in soup.find_all("a"):
@@ -741,25 +739,25 @@ def convert_internal_links(
         if not href or href.startswith(("http://", "https://", "mailto:", "#")):
             continue
 
-        # Remove anchor part for path resolution
+        # 解析路径时去掉锚点
         anchor = ""
         if "#" in href:
             href, anchor = href.split("#", 1)
             anchor = "#" + anchor
 
-        # Resolve relative path from current file's directory
+        # 从当前文件所在目录解析相对路径
         if href:
             resolved = (current_file.parent / href).resolve()
             try:
                 rel_to_root = resolved.relative_to(root_path)
             except ValueError:
-                # Link points outside the repo
+                # 链接指向仓库外
                 continue
 
-            # Normalize the path for lookup
+            # 规范化路径以便查找
             lookup_path = str(rel_to_root)
 
-            # Try various path forms for matching
+            # 尝试多种路径形式以匹配
             paths_to_try = [
                 lookup_path,
                 lookup_path.rstrip("/"),
@@ -784,18 +782,18 @@ def md_to_html(
     state: BuildState,
     logger: logging.Logger,
 ) -> str:
-    """Convert markdown to HTML with proper styling.
+    """将 Markdown 转为带样式的 HTML。
 
-    Handles:
-    - Mermaid diagrams (rendered as PNG images)
-    - SVG images (replaced with styled placeholders)
-    - Internal links (converted to EPUB chapter references)
-    - Standard markdown features
+    处理内容：
+    - Mermaid 图表（渲染为 PNG）
+    - SVG 图片（替换为样式占位符）
+    - 内部链接（转为 EPUB 章节引用）
+    - 常规 Markdown 特性
     """
-    # Process mermaid blocks first (before markdown conversion)
+    # 先于 Markdown 转换处理 mermaid 块
     md_content = process_mermaid_blocks(md_content, book, state, logger)
 
-    # Convert markdown to HTML
+    # Markdown -> HTML
     html_content = markdown.markdown(
         md_content,
         extensions=[
@@ -806,30 +804,30 @@ def md_to_html(
         ],
     )
 
-    # Clean up any SVG references (they won't work in EPUB)
+    # 清理 SVG 引用（EPUB 中无法直接使用）
     soup = BeautifulSoup(html_content, "html.parser")
     for img in soup.find_all("img"):
         src = img.get("src", "")
         if src.endswith(".svg"):
-            alt = img.get("alt", "Image")
+            alt = img.get("alt", "图片")
             placeholder = handle_svg_image(src, alt, logger)
             img.replace_with(BeautifulSoup(placeholder, "html.parser"))
 
     html_content = str(soup)
 
-    # Convert internal links to EPUB chapter references
+    # 内部链接 -> EPUB 章节引用
     html_content = convert_internal_links(html_content, current_file, root_path, state)
 
     return html_content
 
 
 # =============================================================================
-# EPUB Generation
+# EPUB 生成
 # =============================================================================
 
 
 def create_stylesheet() -> epub.EpubItem:
-    """Create the EPUB stylesheet."""
+    """创建 EPUB 样式表。"""
     style = """
     body { font-family: Georgia, serif; line-height: 1.6; padding: 1em; }
     h1 { color: #333; border-bottom: 2px solid #e67e22; padding-bottom: 0.3em; }
@@ -860,36 +858,36 @@ async def build_epub_async(
     logger: logging.Logger,
     state: BuildState | None = None,
 ) -> Path:
-    """Build EPUB asynchronously with concurrent diagram fetching."""
+    """异步构建 EPUB，并并发获取图表。"""
     state = state or BuildState()
-    state.reset()  # Ensure clean state
+    state.reset()  # 确保从干净状态开始
 
-    # Validate inputs
+    # 校验输入
     validate_inputs(config, logger)
 
-    # Initialize book
+    # 初始化电子书
     book = epub.EpubBook()
     book.set_identifier(config.identifier)
     book.set_title(config.title)
     book.set_language(config.language)
     book.add_author(config.author)
 
-    # Add cover
-    logger.info("Generating cover image...")
+    # 封面
+    logger.info("正在生成封面图...")
     cover_data = create_cover_image(config, logger)
     book.set_cover("cover.png", cover_data)
 
-    # Add CSS
+    # CSS
     nav_css = create_stylesheet()
     book.add_item(nav_css)
 
-    # Collect all chapters in single pass
-    logger.info("Collecting chapters...")
+    # 单次遍历收集章节
+    logger.info("正在收集章节...")
     collector = ChapterCollector(config.root_path, state)
     chapter_infos = collector.collect_all_chapters(get_chapter_order())
 
-    # Extract and pre-fetch all Mermaid diagrams
-    logger.info("Extracting Mermaid diagrams...")
+    # 提取并预取全部 Mermaid 图表
+    logger.info("正在提取 Mermaid 图表...")
     md_files = [(ch.file_path, ch.file_title) for ch in chapter_infos]
     all_diagrams = extract_all_mermaid_blocks(md_files, logger)
 
@@ -897,8 +895,8 @@ async def build_epub_async(
         renderer = MermaidRenderer(config, state, logger)
         await renderer.render_all(all_diagrams)
 
-    # Process chapters
-    logger.info("Processing chapters...")
+    # 处理各章
+    logger.info("正在处理章节...")
     chapters: list[epub.EpubHtml] = []
     toc: list[epub.EpubHtml | tuple[epub.Section, list[epub.EpubHtml]]] = []
 
@@ -909,13 +907,13 @@ async def build_epub_async(
         try:
             content = chapter_info.file_path.read_text(encoding="utf-8")
         except UnicodeDecodeError as e:
-            logger.error(f"Failed to read {chapter_info.file_path}: {e}")
+            logger.error(f"无法读取 {chapter_info.file_path}：{e}")
             raise ValidationError(
                 f"Failed to read {chapter_info.file_path}: {e}"
             ) from e
 
         logger.debug(
-            f"Processing: {chapter_info.file_path.relative_to(config.root_path)}"
+            f"处理中：{chapter_info.file_path.relative_to(config.root_path)}"
         )
         html_content = md_to_html(
             content, chapter_info.file_path, config.root_path, book, state, logger
@@ -938,11 +936,11 @@ async def build_epub_async(
         book.add_item(chapter)
         chapters.append(chapter)
 
-        # Build TOC structure
+        # 构建目录结构
         if chapter_info.folder_name is None:
-            # Single file chapter
+            # 单文件章节
             if current_folder is not None:
-                # Finish previous folder
+                # 结束上一目录分组
                 toc.append(
                     (epub.Section(current_folder), current_folder_chapters.copy())
                 )
@@ -950,10 +948,10 @@ async def build_epub_async(
                 current_folder = None
             toc.append(chapter)
         else:
-            # Part of a folder
+            # 目录下的章节
             if current_folder != chapter_info.folder_name:
                 if current_folder is not None:
-                    # Finish previous folder
+                    # 结束上一目录分组
                     toc.append(
                         (epub.Section(current_folder), current_folder_chapters.copy())
                     )
@@ -961,81 +959,81 @@ async def build_epub_async(
                 current_folder = chapter_info.folder_name
             current_folder_chapters.append(chapter)
 
-    # Handle last folder
+    # 处理最后一个目录分组
     if current_folder is not None and current_folder_chapters:
         toc.append((epub.Section(current_folder), current_folder_chapters))
 
-    # Set table of contents
+    # 设置目录
     book.toc = toc
 
-    # Add navigation files
+    # 导航文件
     book.add_item(epub.EpubNcx())
     book.add_item(epub.EpubNav())
 
-    # Set spine
+    # spine
     book.spine = ["nav"] + chapters
 
-    # Write EPUB
-    logger.info(f"Writing EPUB to {config.output_path}...")
+    # 写入 EPUB
+    logger.info(f"正在写入 EPUB：{config.output_path}...")
     epub.write_epub(str(config.output_path), book, {})
 
-    logger.info(f"EPUB created successfully: {config.output_path}")
+    logger.info(f"EPUB 已成功创建：{config.output_path}")
     return config.output_path
 
 
 def create_epub(root_path: Path, output_path: Path, verbose: bool = False) -> Path:
-    """Synchronous wrapper for backward compatibility."""
+    """同步封装，保持向后兼容。"""
     logger = setup_logging(verbose)
     config = EPUBConfig(root_path=root_path, output_path=output_path)
     return asyncio.run(build_epub_async(config, logger))
 
 
 # =============================================================================
-# CLI
+# 命令行
 # =============================================================================
 
 
 def main() -> int:
-    """Main entry point with CLI argument parsing."""
+    """命令行入口与参数解析。"""
     parser = argparse.ArgumentParser(
-        description="Build an EPUB from Claude How-To markdown files."
+        description="根据 Claude How-To 的 Markdown 文件构建 EPUB。"
     )
     parser.add_argument(
         "--root",
         "-r",
         type=Path,
         default=None,
-        help="Root directory containing markdown files (default: repo root)",
+        help="包含 Markdown 的根目录（默认：仓库根目录）",
     )
     parser.add_argument(
         "--output",
         "-o",
         type=Path,
         default=None,
-        help="Output EPUB file path (default: <root>/claude-howto-guide.epub)",
+        help="输出的 EPUB 文件路径（默认：<root>/claude-howto-guide.epub）",
     )
     parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose logging"
+        "--verbose", "-v", action="store_true", help="启用详细日志"
     )
     parser.add_argument(
         "--timeout",
         type=float,
         default=30.0,
-        help="Timeout for API requests in seconds (default: 30)",
+        help="API 请求超时（秒）（默认：30）",
     )
     parser.add_argument(
         "--max-concurrent",
         type=int,
         default=10,
-        help="Maximum concurrent API requests (default: 10)",
+        help="最大并发 API 请求数（默认：10）",
     )
 
     args = parser.parse_args()
 
-    # Determine root path
+    # 确定根路径
     root = args.root
     if root is None:
-        # Default to parent of scripts directory (repo root)
+        # 默认为 scripts 的上一级（仓库根目录）
         root = Path(__file__).parent.parent
 
     root = root.resolve()
@@ -1052,13 +1050,13 @@ def main() -> int:
 
     try:
         result = asyncio.run(build_epub_async(config, logger))
-        print(f"Successfully created: {result}")
+        print(f"已成功创建：{result}")
         return 0
     except EPUBBuildError as e:
-        logger.error(f"Build failed: {e}")
+        logger.error(f"构建失败：{e}")
         return 1
     except KeyboardInterrupt:
-        logger.warning("Build interrupted by user")
+        logger.warning("用户中断了构建")
         return 130
 
 

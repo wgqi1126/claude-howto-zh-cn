@@ -13,6 +13,11 @@
 
 从输入 `claude` 开始，进阶到编排 agents、hooks、skills 和 MCP 服务器，并配合可视化教程、可直接复制的模板以及循序渐进的学习路径。
 
+> **说明**
+> 为了帮助中文用户更好地理解 Claude Code 的各项功能、原理和工作方式，本项目尽量将仓库内可翻译的内容都做了中文化处理。
+> 但在实际使用中，slash commands、Skills、`CLAUDE.md`、Hooks 提示词等内容会直接参与模型输入；翻译后，它们的实际效果可能与上游原版示例存在一些差异。
+> 如果你更希望获得与原始示例尽可能一致的使用效果，建议优先参考或使用上游仓库 [`luongnv89/claude-howto`](https://github.com/luongnv89/claude-howto)。
+
 **[15 分钟快速上手](#-get-started-in-15-minutes)** | **[找到你的当前水平](#-not-sure-where-to-start)** | **[浏览功能目录](CATALOG.md)**
 
 ---

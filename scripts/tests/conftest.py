@@ -1,4 +1,4 @@
-"""Pytest configuration and shared fixtures for EPUB builder tests."""
+"""EPUB 构建器测试的 Pytest 配置与共享 fixtures。"""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-# Add parent directory to path for imports
+# 将父目录加入路径以便导入
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from build_epub import BuildState, EPUBConfig, setup_logging
@@ -16,18 +16,18 @@ from build_epub import BuildState, EPUBConfig, setup_logging
 
 @pytest.fixture
 def tmp_project(tmp_path: Path) -> Path:
-    """Create a minimal project structure for testing."""
-    # Create root markdown file
+    """创建用于测试的最小项目结构。"""
+    # 创建根目录 Markdown 文件
     readme = tmp_path / "README.md"
-    readme.write_text("# Test Project\n\nThis is a test.")
+    readme.write_text("# 测试项目\n\n这是测试内容。")
 
-    # Create a chapter directory
+    # 创建章节目录
     chapter_dir = tmp_path / "01-test-chapter"
     chapter_dir.mkdir()
-    (chapter_dir / "README.md").write_text("# Chapter Overview\n\nOverview content.")
-    (chapter_dir / "section.md").write_text("# Section\n\nSection content.")
+    (chapter_dir / "README.md").write_text("# 章节概览\n\n概览正文。")
+    (chapter_dir / "section.md").write_text("# 小节\n\n小节正文。")
 
-    # Create a proper PNG logo using PIL
+    # 使用 PIL 创建有效的 PNG logo
     from PIL import Image as PILImage
 
     logo_path = tmp_path / "claude-howto-logo.png"
@@ -39,7 +39,7 @@ def tmp_project(tmp_path: Path) -> Path:
 
 @pytest.fixture
 def config(tmp_project: Path) -> EPUBConfig:
-    """Create a test configuration."""
+    """创建测试用配置。"""
     return EPUBConfig(
         root_path=tmp_project,
         output_path=tmp_project / "test.epub",
@@ -48,11 +48,11 @@ def config(tmp_project: Path) -> EPUBConfig:
 
 @pytest.fixture
 def state() -> BuildState:
-    """Create a fresh build state."""
+    """创建全新的构建状态。"""
     return BuildState()
 
 
 @pytest.fixture
 def logger() -> logging.Logger:
-    """Create a test logger."""
+    """创建测试用 logger。"""
     return setup_logging(verbose=False)

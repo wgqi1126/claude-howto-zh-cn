@@ -1,4 +1,4 @@
-# Core dependencies for build_epub.py
+# build_epub.py 的核心依赖
 ebooklib
 markdown
 beautifulsoup4
