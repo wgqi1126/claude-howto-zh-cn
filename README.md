@@ -3,8 +3,8 @@
   <img alt="Claude How To" src="resources/logos/claude-howto-logo.svg">
 </picture>
 
-[![GitHub Stars](https://img.shields.io/github/stars/luongnv89/claude-howto?style=flat&color=gold)](https://github.com/luongnv89/claude-howto/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/luongnv89/claude-howto?style=flat)](https://github.com/luongnv89/claude-howto/network/members)
+[![GitHub Stars](https://img.shields.io/github/stars/wgqi1126/claude-howto-zh-cn?style=flat&color=gold)](https://github.com/wgqi1126/claude-howto-zh-cn/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/wgqi1126/claude-howto-zh-cn?style=flat)](https://github.com/wgqi1126/claude-howto-zh-cn/network/members)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-2.2.0-brightgreen)](CHANGELOG.md)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-2.1+-purple)](https://code.claude.com)
@@ -103,7 +103,7 @@ Claude Code 90% 的能力你都还没真正用上，而且你甚至不知道自�
 - **持续维护中**，会随每次 Claude Code 发布同步更新（最新版本：v2.2.0，2026 年 3 月）
 - **社区驱动**，贡献者会持续分享自己在真实项目中的配置与经验
 
-[![Star History Chart](https://api.star-history.com/svg?repos=luongnv89/claude-howto&type=Date)](https://star-history.com/#luongnv89/claude-howto&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=wgqi1126/claude-howto-zh-cn&type=Date)](https://star-history.com/#wgqi1126/claude-howto-zh-cn&Date)
 
 ---
 
@@ -144,8 +144,8 @@ Claude Code 90% 的能力你都还没真正用上，而且你甚至不知道自�
 
 ```bash
 # 1. 克隆本指南
-git clone https://github.com/luongnv89/claude-howto.git
-cd claude-howto
+git clone https://github.com/wgqi1126/claude-howto-zh-cn.git
+cd claude-howto-zh-cn
 
 # 2. 复制你的第一个 slash command
 mkdir -p /path/to/your-project/.claude/commands
@@ -838,7 +838,7 @@ uv run scripts/build_epub.py
 
 如果你发现了安全漏洞，请负责任地进行报告：
 
-1. **使用 GitHub 私有漏洞报告**: https://github.com/luongnv89/claude-howto/security/advisories
+1. **使用 GitHub 私有漏洞报告**: https://github.com/wgqi1126/claude-howto-zh-cn/security/advisories
 2. **或者阅读** [.github/SECURITY_REPORTING.md](.github/SECURITY_REPORTING.md) 获取详细说明
 3. **不要** 为安全漏洞创建公开 issue
 
@@ -877,8 +877,8 @@ uv run scripts/build_epub.py
 
 | 贡献者 | PR |
 |--------|----|
-| [wjhrdy](https://github.com/wjhrdy) | [#1 - add a tool to create an epub](https://github.com/luongnv89/claude-howto/pull/1) |
-| [VikalpP](https://github.com/VikalpP) | [#7 - fix(docs): Use tilde fences for nested code blocks in concepts guide](https://github.com/luongnv89/claude-howto/pull/7) |
+| [wjhrdy](https://github.com/wjhrdy) | [#1 - add a tool to create an epub](https://github.com/wgqi1126/claude-howto-zh-cn/pull/1) |
+| [VikalpP](https://github.com/VikalpP) | [#7 - fix(docs): Use tilde fences for nested code blocks in concepts guide](https://github.com/wgqi1126/claude-howto-zh-cn/pull/7) |
 
 ---
 
