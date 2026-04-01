@@ -1,108 +1,152 @@
-# Clean Code Rules for AI Code Generation
+<a id="clean-code-rules-for-ai-code-generation"></a>
 
-These rules guide code generation to produce maintainable, professional-quality code.
+# AI 代码生成的整洁代码规则
 
-## Meaningful Names
-- Use intention-revealing names that explain why something exists
-- Avoid disinformation and meaningless distinctions (e.g., `data`, `info`, `manager`)
-- Use pronounceable, searchable names
-- Class names: nouns (e.g., `UserAccount`, `PaymentProcessor`)
-- Method names: verbs (e.g., `calculateTotal`, `sendEmail`)
-- Avoid mental mapping and encodings (Hungarian notation, prefixes)
+以下规则用于指导代码生成，使产出可维护、具备专业质量的代码。
 
-## Functions
-- Keep functions small (< 20 lines ideal)
-- Do one thing only - Single Responsibility Principle
-- One level of abstraction per function
-- Limit arguments: 0-2 ideal, 3 maximum, avoid flag arguments
-- No side effects - function should do what its name says
-- Separate commands (change state) from queries (return info)
-- Prefer exceptions over error codes
+<a id="meaningful-names"></a>
 
-## Comments
-- Code should be self-explanatory - avoid comments when possible
-- Good comments: legal info, warnings, TODOs, public API documentation
-- Bad comments: redundant, misleading, or explaining bad code
-- Never comment out code - delete it (version control preserves history)
-- If you need a comment, consider refactoring the code instead
+## 有意义的命名
 
-## Formatting
-- Keep files small and focused
-- Vertical formatting: related concepts close together, blank lines separate concepts
-- Horizontal formatting: limit line length (80-120 characters)
-- Use consistent indentation and team style
-- Group related functions together
+- 使用能体现意图的名字，说明「为什么」存在
+- 避免误导和无意义的区分（例如 `data`、`info`、`manager`）
+- 使用可读、可搜索的名字
+- 类名：名词（例如 `UserAccount`、`PaymentProcessor`）
+- 方法名：动词（例如 `calculateTotal`、`sendEmail`）
+- 避免心智负担与编码式命名（匈牙利命名法、前缀等）
 
-## Objects and Data Structures
-- Objects: hide data behind abstractions, expose behavior through methods
-- Data structures: expose data, have minimal behavior
-- Law of Demeter: only talk to immediate friends, avoid `a.getB().getC().doSomething()`
-- Don't expose internal structure through getters/setters blindly
+<a id="functions"></a>
 
-## Error Handling
-- Use exceptions, not return codes or error flags
-- Write `try-catch-finally` first when code might fail
-- Provide context in exception messages
-- Don't return `null` - return empty collections or use Optional/Maybe
-- Don't pass `null` as arguments
+## 函数
 
-## Classes
-- Small classes: measured by responsibilities, not lines
-- Single Responsibility Principle: one reason to change
-- High cohesion: class variables used by many methods
-- Low coupling: minimal dependencies between classes
-- Open/Closed Principle: open for extension, closed for modification
+- 保持函数短小（理想情况下少于 20 行）
+- 只做一件事——单一职责原则
+- 每个函数只处于一个抽象层次
+- 控制参数个数：0–2 个最理想，最多 3 个，避免布尔开关参数
+- 无副作用——函数行为应与其名称一致
+- 区分命令（改变状态）与查询（返回信息）
+- 优先使用异常，而非错误码
 
-## Unit Tests
-- Fast, Independent, Repeatable, Self-validating, Timely (F.I.R.S.T.)
-- One assert per test (or one concept)
-- Test code quality equals production code quality
-- Readable test names that describe what's being tested
-- Arrange-Act-Assert pattern
+<a id="comments"></a>
 
-## Code Quality Principles
-- **DRY (Don't Repeat Yourself)**: No duplication
-- **YAGNI (You Aren't Gonna Need It)**: Don't build for hypothetical futures
-- **KISS (Keep It Simple)**: Avoid unnecessary complexity
-- **Boy Scout Rule**: Leave code cleaner than you found it
+## 注释
 
-## Code Smells to Avoid
-- Long functions or classes
-- Duplicate code
-- Dead code (unused variables, functions, parameters)
-- Feature envy (method more interested in other class)
-- Inappropriate intimacy (classes knowing too much about each other)
-- Long parameter lists
-- Primitive obsession (overusing primitives instead of small objects)
-- Switch/case statements (consider polymorphism)
-- Temporary fields (class variables only used sometimes)
+- 代码应能自解释——能不用注释就不用
+- 好的注释：法律信息、警告、TODO、公开 API 文档
+- 差的注释：重复代码、误导、或为烂代码辩解
+- 不要注释掉代码——直接删除（版本控制会保留历史）
+- 若觉得需要注释，优先考虑重构代码
 
-## Concurrency
-- Keep concurrent code separate from other code
-- Limit scope of synchronized/locked data
-- Use thread-safe collections
-- Keep synchronized sections small
-- Know your execution models and primitives
+<a id="formatting"></a>
 
-## System Design
-- Separate construction from use (dependency injection)
-- Use factories, builders for complex object creation
-- Program to interfaces, not implementations
-- Favor composition over inheritance
-- Apply design patterns when they simplify, not to show off
+## 格式
 
-## Refactoring
-- Refactor continuously, not in big batches
-- Always have passing tests before and after
-- Small steps: one change at a time
-- Common refactorings: Extract Method, Rename, Move, Inline
+- 保持文件小而聚焦
+- 纵向：相关概念靠近，用空行分隔不同概念
+- 横向：控制行宽（80–120 字符）
+- 使用一致的缩进与团队风格
+- 将相关函数归组
 
-## Documentation
-- Self-documenting code > comments > external docs
-- Public APIs need clear documentation
-- Include examples in documentation
-- Keep docs close to code (ideally in code)
+<a id="objects-and-data-structures"></a>
+
+## 对象与数据结构
+
+- 对象：用抽象隐藏数据，通过方法暴露行为
+- 数据结构：暴露数据，行为尽量少
+- 迪米特法则：只与直接朋友通信，避免 `a.getB().getC().doSomething()`
+- 不要盲目通过 getter/setter 暴露内部结构
+
+<a id="error-handling"></a>
+
+## 错误处理
+
+- 使用异常，不要用返回码或错误标志
+- 在可能失败的代码中先写 `try-catch-finally`
+- 在异常信息中提供上下文
+- 不要返回 `null`——返回空集合或使用 Optional/Maybe
+- 不要用 `null` 作为参数传入
+
+<a id="classes"></a>
+
+## 类
+
+- 类要小：以职责衡量，不以行数衡量
+- 单一职责原则：只有一个修改理由
+- 高内聚：类成员变量被多个方法共同使用
+- 低耦合：类之间的依赖尽量少
+- 开闭原则：对扩展开放，对修改关闭
+
+<a id="unit-tests"></a>
+
+## 单元测试
+
+- 快、独立、可重复、自校验、及时（F.I.R.S.T.）
+- 每个测试一个断言（或一个概念）
+- 测试代码质量与生产代码同等重要
+- 测试名可读，说明在测什么
+- Arrange-Act-Assert 模式
+
+<a id="code-quality-principles"></a>
+
+## 代码质量原则
+
+- **DRY（不要重复自己）**：禁止重复
+- **YAGNI（你不会需要它）**：不要为假想中的未来而开发
+- **KISS（保持简单）**：避免不必要的复杂度
+- **童子军规则**：离开时代码比你接手时更整洁
+
+<a id="code-smells-to-avoid"></a>
+
+## 应避免的代码坏味道
+
+- 过长的函数或类
+- 重复代码
+- 死代码（未使用的变量、函数、参数）
+- 依恋情结（方法更关心其他类）
+- 不恰当的亲密性（类之间知道太多彼此细节）
+- 过长参数列表
+- 基本类型偏执（过度使用基本类型而非小对象）
+- `switch`/`case` 语句（可考虑多态）
+- 临时字段（类成员变量只在部分场景使用）
+
+<a id="concurrency"></a>
+
+## 并发
+
+- 将并发相关代码与其他代码分离
+- 缩小同步/加锁数据的范围
+- 使用线程安全的集合
+- 保持同步块尽量小
+- 弄清你的执行模型与基础原语
+
+<a id="system-design"></a>
+
+## 系统设计
+
+- 将构造与使用分离（依赖注入）
+- 复杂对象创建使用工厂、建造者等
+- 面向接口编程，而非面向实现
+- 优先组合而非继承
+- 在能简化时再使用设计模式，不要为了炫技而使用
+
+<a id="refactoring"></a>
+
+## 重构
+
+- 持续重构，不要攒一大波再改
+- 重构前后测试都应通过
+- 小步前进：一次只做一个改动
+- 常见重构：提炼方法、重命名、搬移、内联
+
+<a id="documentation"></a>
+
+## 文档
+
+- 自解释代码 > 注释 > 外部文档
+- 公开 API 需要清晰文档
+- 文档中包含示例
+- 文档尽量靠近代码（最好在代码里）
 
 ---
 
-**Core Philosophy**: Code is read 10x more than written. Optimize for readability and maintainability, not cleverness.
+**核心理念**：读代码的次数远多于写代码。优先为可读性与可维护性优化，而不是为「聪明」优化。
