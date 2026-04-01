@@ -1,0 +1,39 @@
+---
+description: 项目概况、目录结构与 CI 信息
+alwaysApply: true
+---
+
+# Project Context
+
+- 这是一个 Claude Code 功能的文档/教程项目，内容涵盖 slash commands、skills、subagents、hooks、MCP 服务器和 plugins。
+- 本项目是 `luongnv89/claude-howto` 的中文化版本，目标是将原项目的文档和教程翻译成中文，帮助中文用户更好地学习和使用 Claude Code。
+- 仓库主要内容是 Markdown 文档，按编号模块组织，从 `01-slash-commands` 到 `10-cli`。
+- `scripts/` 中的 Python 脚本用于 EPUB 电子书生成和测试。
+
+## 目录结构
+
+- `01-slash-commands/`：用户调用的快捷命令模板（`.md`）
+- `02-memory/`：memory 模板，用于持久化上下文
+- `03-skills/`：自动调用的能力（`SKILL.md` + `scripts/` + `templates/`）
+- `04-subagents/`：专业智能体定义（`.md`）
+- `05-mcp/`：Model Context Protocol 服务器配置（`.json`）
+- `06-hooks/`：事件驱动的自动化脚本（`.sh`）
+- `07-plugins/`：打包的功能集合
+- `08-checkpoints/`：会话快照文档
+- `09-advanced-features/`：规划模式、后台任务、权限
+- `10-cli/`：CLI 参考文档
+- `scripts/`：Python 工具（`build_epub.py`、`tests/`）
+- `resources/`：Logo、设计系统资源
+
+## 模块约定
+
+- 每个编号模块通常包含 `README.md` 作为概述和索引。
+- 功能特定文件一般采用：命令/智能体使用 `.md`，skills 使用目录结构，MCP 配置使用 `.json`。
+- 每个功能通常会附带可复制粘贴的安装命令。
+
+## CI/CD
+
+- GitHub Actions 配置位于 `.github/workflows/test.yml`。
+- 当 `scripts/**` 变化时，推送到 `main`/`develop` 会触发 CI。
+- 当 `scripts/**` 变化时，向 `main` 提交 PR 会触发 CI。
+- CI 任务包括：`pytest`（Python 3.10-3.12）、`ruff` lint/format、`bandit` 安全扫描、`mypy` 类型检查、EPUB 构建验证。

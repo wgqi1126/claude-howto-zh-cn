@@ -1,0 +1,20 @@
+---
+description: Git 提交、分支与 PR 约定
+alwaysApply: true
+---
+
+# Git Conventions
+
+- Git commit message、PR 标题、PR 描述默认使用中文。
+- 提交格式默认使用：`类型(范围): 描述`。
+- 提交类型优先使用中文：`新增`、`修复`、`文档`、`重构`、`样式`、`测试`、`杂项`。
+- 除非用户明确要求，否则不要使用 `feat`、`fix`、`docs` 这类英文提交类型。
+- 常用分支命名参考：`add/feature-name`、`fix/issue-description`、`docs/improvement-area`。
+
+示例：
+
+```bash
+git commit -m "新增(文档): 添加中文化说明"
+git commit -m "修复(脚本): 修复 EPUB 生成错误"
+git commit -m "文档(README): 更新安装指南"
+```

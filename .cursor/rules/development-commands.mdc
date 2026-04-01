@@ -1,0 +1,47 @@
+---
+description: Python 开发、测试与 EPUB 构建命令
+alwaysApply: true
+---
+
+# Development Commands
+
+## Python 环境设置
+
+```bash
+brew install uv  # macOS
+pip install uv   # 或通过 pip 安装
+
+cd scripts
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements-dev.txt
+```
+
+## 测试
+
+```bash
+pytest scripts/tests/ -v
+pytest scripts/tests/ -v --cov=scripts --cov-report=html
+pytest scripts/tests/test_build_epub.py -v
+pytest scripts/tests/test_build_epub.py::test_function_name -v
+```
+
+## 代码质量与安全
+
+```bash
+ruff format --check scripts/
+ruff format scripts/
+ruff check scripts/
+ruff check --fix scripts/
+bandit -c pyproject.toml -r scripts/ --exclude scripts/tests/
+mypy scripts/ --ignore-missing-imports --no-implicit-optional
+```
+
+## EPUB 构建与 Hooks
+
+```bash
+uv run scripts/build_epub.py
+uv run scripts/build_epub.py --verbose
+pre-commit install
+pre-commit run --all-files
+```
