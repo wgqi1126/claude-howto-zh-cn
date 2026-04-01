@@ -3,22 +3,24 @@
   <img alt="Claude How To" src="../resources/logos/claude-howto-logo.svg">
 </picture>
 
-# MCP (Model Context Protocol)
+# MCP（Model Context Protocol）
 
-This folder contains comprehensive documentation and examples for MCP server configurations and usage with Claude Code.
+本文件夹包含在 Claude Code 中使用 MCP 服务器配置与用法的完整文档与示例。
 
-## Overview
+<a id="overview"></a>
+## 概述
 
-MCP (Model Context Protocol) is a standardized way for Claude to access external tools, APIs, and real-time data sources. Unlike Memory, MCP provides live access to changing data.
+MCP（Model Context Protocol）让 Claude 能够以标准化方式访问外部工具、API 与实时数据源。与 Memory 不同，MCP 提供对变化中数据的实时访问。
 
-Key characteristics:
-- Real-time access to external services
-- Live data synchronization
-- Extensible architecture
-- Secure authentication
-- Tool-based interactions
+主要特点：
+- 实时访问外部服务
+- 实时数据同步
+- 可扩展架构
+- 安全认证
+- 基于工具的交互
 
-## MCP Architecture
+<a id="mcp-architecture"></a>
+## MCP 架构
 
 ```mermaid
 graph TB
@@ -41,7 +43,8 @@ graph TB
     style C fill:#e8f5e9,stroke:#333,color:#333
 ```
 
-## MCP Ecosystem
+<a id="mcp-ecosystem"></a>
+## MCP 生态
 
 ```mermaid
 graph TB
@@ -70,11 +73,13 @@ graph TB
     style K fill:#e8f5e9,stroke:#333,color:#333
 ```
 
-## MCP Installation Methods
+<a id="mcp-installation-methods"></a>
+## MCP 安装方式
 
-Claude Code supports multiple transport protocols for MCP server connections:
+Claude Code 支持多种传输协议用于连接 MCP 服务器：
 
-### HTTP Transport (Recommended)
+<a id="http-transport-recommended"></a>
+### HTTP 传输（推荐）
 
 ```bash
 # Basic HTTP connection
@@ -85,9 +90,10 @@ claude mcp add --transport http secure-api https://api.example.com/mcp \
   --header "Authorization: Bearer your-token"
 ```
 
-### Stdio Transport (Local)
+<a id="stdio-transport-local"></a>
+### Stdio 传输（本地）
 
-For locally running MCP servers:
+适用于在本地运行的 MCP 服务器：
 
 ```bash
 # Local Node.js server
@@ -97,33 +103,37 @@ claude mcp add --transport stdio myserver -- npx @myorg/mcp-server
 claude mcp add --transport stdio myserver --env KEY=value -- npx server
 ```
 
-### SSE Transport (Deprecated)
+<a id="sse-transport-deprecated"></a>
+### SSE 传输（已弃用）
 
-Server-Sent Events transport is deprecated in favor of `http` but still supported:
+Server-Sent Events 传输已弃用，建议改用 `http`，但仍受支持：
 
 ```bash
 claude mcp add --transport sse legacy-server https://example.com/sse
 ```
 
-### WebSocket Transport
+<a id="websocket-transport"></a>
+### WebSocket 传输
 
-WebSocket transport for persistent bidirectional connections:
+用于持久双向连接的 WebSocket 传输：
 
 ```bash
 claude mcp add --transport ws realtime-server wss://example.com/mcp
 ```
 
-### Windows-Specific Note
+<a id="windows-specific-note"></a>
+### Windows 特别说明
 
-On native Windows (not WSL), use `cmd /c` for npx commands:
+在原生 Windows（非 WSL）上，对 npx 命令请使用 `cmd /c`：
 
 ```bash
 claude mcp add --transport stdio my-server -- cmd /c npx -y @some/package
 ```
 
-### OAuth 2.0 Authentication
+<a id="oauth-20-authentication"></a>
+### OAuth 2.0 认证
 
-Claude Code supports OAuth 2.0 for MCP servers that require it. When connecting to an OAuth-enabled server, Claude Code handles the entire authentication flow:
+Claude Code 支持需要 OAuth 2.0 的 MCP 服务器。连接已启用 OAuth 的服务器时，Claude Code 会处理完整认证流程：
 
 ```bash
 # Connect to an OAuth-enabled MCP server (interactive flow)
@@ -136,19 +146,20 @@ claude mcp add --transport http my-service https://my-service.example.com/mcp \
   --callback-port 8080
 ```
 
-| Feature | Description |
+| 功能 | 说明 |
 |---------|-------------|
-| **Interactive OAuth** | Use `/mcp` to trigger the browser-based OAuth flow |
-| **Pre-configured OAuth clients** | Built-in OAuth clients for common services like Notion, Stripe, and others (v2.1.30+) |
-| **Pre-configured credentials** | `--client-id`, `--client-secret`, `--callback-port` flags for automated setup |
-| **Token storage** | Tokens are stored securely in your system keychain |
-| **Step-up auth** | Supports step-up authentication for privileged operations |
-| **Discovery caching** | OAuth discovery metadata is cached for faster reconnections |
-| **Metadata override** | `oauth.authServerMetadataUrl` in `.mcp.json` to override default OAuth metadata discovery |
+| **交互式 OAuth** | 使用 `/mcp` 触发基于浏览器的 OAuth 流程 |
+| **预配置 OAuth 客户端** | 针对 Notion、Stripe 等常见服务的内置 OAuth 客户端（v2.1.30+） |
+| **预配置凭据** | 使用 `--client-id`、`--client-secret`、`--callback-port` 实现自动化配置 |
+| **令牌存储** | 令牌安全保存在系统钥匙串中 |
+| **阶梯式认证（Step-up auth）** | 支持对敏感操作进行阶梯式认证 |
+| **发现缓存** | 缓存 OAuth 发现元数据以加快重连 |
+| **元数据覆盖** | 在 `.mcp.json` 中设置 `oauth.authServerMetadataUrl` 以覆盖默认 OAuth 元数据发现 |
 
-#### Overriding OAuth Metadata Discovery
+<a id="overriding-oauth-metadata-discovery"></a>
+#### 覆盖 OAuth 元数据发现
 
-If your MCP server returns errors on the standard OAuth metadata endpoint (`/.well-known/oauth-authorization-server`) but exposes a working OIDC endpoint, you can tell Claude Code to fetch OAuth metadata from a specific URL. Set `authServerMetadataUrl` in the `oauth` object of your server config:
+若你的 MCP 服务器在标准 OAuth 元数据端点（`/.well-known/oauth-authorization-server`）上返回错误，但提供了可用的 OIDC 端点，可让 Claude Code 从指定 URL 拉取 OAuth 元数据。在服务器配置的 `oauth` 对象中设置 `authServerMetadataUrl`：
 
 ```json
 {
@@ -164,23 +175,25 @@ If your MCP server returns errors on the standard OAuth metadata endpoint (`/.we
 }
 ```
 
-The URL must use `https://`. This option requires Claude Code v2.1.64 or later.
+URL 必须使用 `https://`。此选项需要 Claude Code v2.1.64 或更高版本。
 
+<a id="claudeai-mcp-connectors"></a>
 ### Claude.ai MCP Connectors
 
-MCP servers configured in your Claude.ai account are automatically available in Claude Code. This means any MCP connections you set up through the Claude.ai web interface will be accessible without additional configuration.
+在 Claude.ai 账号中配置的 MCP 服务器会自动出现在 Claude Code 中。也就是说，通过 Claude.ai 网页界面建立的 MCP 连接无需额外配置即可使用。
 
-Claude.ai MCP connectors are also available in `--print` mode (v2.1.83+), enabling non-interactive and scripted usage.
+Claude.ai MCP connectors 在 `--print` 模式下也可用（v2.1.83+），便于非交互与脚本化使用。
 
-To disable Claude.ai MCP servers in Claude Code, set the `ENABLE_CLAUDEAI_MCP_SERVERS` environment variable to `false`:
+若要在 Claude Code 中禁用 Claude.ai 的 MCP 服务器，请将环境变量 `ENABLE_CLAUDEAI_MCP_SERVERS` 设为 `false`：
 
 ```bash
 ENABLE_CLAUDEAI_MCP_SERVERS=false claude
 ```
 
-> **Note:** This feature is only available for users logged in with Claude.ai accounts.
+> **说明：** 此功能仅适用于使用 Claude.ai 账号登录的用户。
 
-## MCP Setup Process
+<a id="mcp-setup-process"></a>
+## MCP 配置流程
 
 ```mermaid
 sequenceDiagram
@@ -200,74 +213,83 @@ sequenceDiagram
     Claude->>User: ✅ MCP connected!
 ```
 
-## MCP Tool Search
+<a id="mcp-tool-search"></a>
+## MCP 工具搜索
 
-When MCP tool descriptions exceed 10% of the context window, Claude Code automatically enables tool search to efficiently select the right tools without overwhelming the model context.
+当 MCP 工具描述超过上下文窗口的 10% 时，Claude Code 会自动启用工具搜索，以便高效选用合适工具，避免撑满模型上下文。
 
-| Setting | Value | Description |
+| 设置 | 取值 | 说明 |
 |---------|-------|-------------|
-| `ENABLE_TOOL_SEARCH` | `auto` (default) | Automatically enables when tool descriptions exceed 10% of context |
-| `ENABLE_TOOL_SEARCH` | `auto:<N>` | Automatically enables at a custom threshold of `N` tools |
-| `ENABLE_TOOL_SEARCH` | `true` | Always enabled regardless of tool count |
-| `ENABLE_TOOL_SEARCH` | `false` | Disabled; all tool descriptions sent in full |
+| `ENABLE_TOOL_SEARCH` | `auto`（默认） | 工具描述超过上下文的 10% 时自动启用 |
+| `ENABLE_TOOL_SEARCH` | `auto:<N>` | 在自定义阈值 `N` 个工具时自动启用 |
+| `ENABLE_TOOL_SEARCH` | `true` | 始终启用，与工具数量无关 |
+| `ENABLE_TOOL_SEARCH` | `false` | 禁用；完整发送所有工具描述 |
 
-> **Note:** Tool search requires Sonnet 4 or later, or Opus 4 or later. Haiku models are not supported for tool search.
+> **说明：** 工具搜索需要 Sonnet 4 或更高版本，或 Opus 4 或更高版本。Haiku 模型不支持工具搜索。
 
-## Dynamic Tool Updates
+<a id="dynamic-tool-updates"></a>
+## 动态工具更新
 
-Claude Code supports MCP `list_changed` notifications. When an MCP server dynamically adds, removes, or modifies its available tools, Claude Code receives the update and adjusts its tool list automatically -- no reconnection or restart required.
+Claude Code 支持 MCP 的 `list_changed` 通知。当 MCP 服务器动态增删或修改可用工具时，Claude Code 会收到更新并自动调整工具列表，无需重连或重启。
 
-## MCP Elicitation
+<a id="mcp-elicitation"></a>
+## MCP 引导输入（Elicitation）
 
-MCP servers can request structured input from the user via interactive dialogs (v2.1.49+). This allows an MCP server to ask for additional information mid-workflow -- for example, prompting for a confirmation, selecting from a list of options, or filling in required fields -- adding interactivity to MCP server interactions.
+MCP 服务器可通过交互式对话框向用户请求结构化输入（v2.1.49+）。这样 MCP 服务器可在工作流中途索取更多信息，例如确认、从选项列表中选择或填写必填字段，从而增强 MCP 交互。
 
-## Tool Description and Instruction Cap
+<a id="tool-description-and-instruction-cap"></a>
+## 工具描述与指令上限
 
-As of v2.1.84, Claude Code enforces a **2 KB cap** on tool descriptions and instructions per MCP server. This prevents individual servers from consuming excessive context with overly verbose tool definitions, reducing context bloat and keeping interactions efficient.
+自 v2.1.84 起，Claude Code 对每个 MCP 服务器的工具描述与指令强制执行 **2 KB 上限**，避免个别服务器用冗长工具定义占用过多上下文，减轻上下文膨胀并保持交互高效。
 
-## MCP Prompts as Slash Commands
+<a id="mcp-prompts-as-slash-commands"></a>
+## 将 MCP Prompts 作为 Slash Commands
 
-MCP servers can expose prompts that appear as slash commands in Claude Code. Prompts are accessible using the naming convention:
+MCP 服务器可暴露在 Claude Code 中显示为 slash commands 的 prompts。按以下命名约定访问：
 
 ```
 /mcp__<server>__<prompt>
 ```
 
-For example, if a server named `github` exposes a prompt called `review`, you can invoke it as `/mcp__github__review`.
+例如，若名为 `github` 的服务器暴露名为 `review` 的 prompt，可调用 `/mcp__github__review`。
 
-## Server Deduplication
+<a id="server-deduplication"></a>
+## 服务器去重
 
-When the same MCP server is defined at multiple scopes (local, project, user), the local configuration takes precedence. This allows you to override project-level or user-level MCP settings with local customizations without conflicts.
+当同一 MCP 服务器在多个作用域（local、project、user）中定义时，以本地配置为准。这样可用本地自定义覆盖项目级或用户级 MCP 设置，且不会冲突。
 
-## MCP Resources via @ Mentions
+<a id="mcp-resources-via--mentions"></a>
+## 通过 @ 提及引用 MCP 资源
 
-You can reference MCP resources directly in your prompts using the `@` mention syntax:
+可在提示词中用 `@` 提及语法直接引用 MCP 资源：
 
 ```
 @server-name:protocol://resource/path
 ```
 
-For example, to reference a specific database resource:
+例如引用特定数据库资源：
 
 ```
 @database:postgres://mydb/users
 ```
 
-This allows Claude to fetch and include MCP resource content inline as part of the conversation context.
+这样 Claude 可拉取并将 MCP 资源内容内联纳入对话上下文。
 
-## MCP Scopes
+<a id="mcp-scopes"></a>
+## MCP 作用域
 
-MCP configurations can be stored at different scopes with varying levels of sharing:
+MCP 配置可存放在不同作用域，共享程度不同：
 
-| Scope | Location | Description | Shared With | Requires Approval |
+| 作用域 | 位置 | 说明 | 与谁共享 | 是否需要批准 |
 |-------|----------|-------------|-------------|------------------|
-| **Local** (default) | `~/.claude.json` (under project path) | Private to current user, current project only (was called `project` in older versions) | Just you | No |
-| **Project** | `.mcp.json` | Checked into git repository | Team members | Yes (first use) |
-| **User** | `~/.claude.json` | Available across all projects (was called `global` in older versions) | Just you | No |
+| **Local**（默认） | `~/.claude.json`（项目路径下） | 仅当前用户、当前项目私有（旧版本中曾称为 `project`） | 仅本人 | 否 |
+| **Project** | `.mcp.json` | 可纳入 git 仓库 | 团队成员 | 是（首次使用） |
+| **User** | `~/.claude.json` | 所有项目可用（旧版本中曾称为 `global`） | 仅本人 | 否 |
 
-### Using Project Scope
+<a id="using-project-scope"></a>
+### 使用 Project 作用域
 
-Store project-specific MCP configurations in `.mcp.json`:
+将项目专用 MCP 配置放在 `.mcp.json`：
 
 ```json
 {
@@ -280,11 +302,13 @@ Store project-specific MCP configurations in `.mcp.json`:
 }
 ```
 
-Team members will see an approval prompt on first use of project MCPs.
+团队成员在首次使用项目 MCP 时会看到批准提示。
 
-## MCP Configuration Management
+<a id="mcp-configuration-management"></a>
+## MCP 配置管理
 
-### Adding MCP Servers
+<a id="adding-mcp-servers"></a>
+### 添加 MCP 服务器
 
 ```bash
 # Add HTTP-based server
@@ -309,24 +333,27 @@ claude mcp reset-project-choices
 claude mcp add-from-claude-desktop
 ```
 
-## Available MCP Servers Table
+<a id="available-mcp-servers-table"></a>
+## 常用 MCP 服务器一览
 
-| MCP Server | Purpose | Common Tools | Auth | Real-time |
+| MCP Server | 用途 | 常见工具 | 认证 | 实时 |
 |------------|---------|--------------|------|-----------|
-| **Filesystem** | File operations | read, write, delete | OS permissions | ✅ Yes |
-| **GitHub** | Repository management | list_prs, create_issue, push | OAuth | ✅ Yes |
-| **Slack** | Team communication | send_message, list_channels | Token | ✅ Yes |
-| **Database** | SQL queries | query, insert, update | Credentials | ✅ Yes |
-| **Google Docs** | Document access | read, write, share | OAuth | ✅ Yes |
-| **Asana** | Project management | create_task, update_status | API Key | ✅ Yes |
-| **Stripe** | Payment data | list_charges, create_invoice | API Key | ✅ Yes |
-| **Memory** | Persistent memory | store, retrieve, delete | Local | ❌ No |
+| **Filesystem** | 文件操作 | read, write, delete | 操作系统权限 | ✅ 是 |
+| **GitHub** | 仓库管理 | list_prs, create_issue, push | OAuth | ✅ 是 |
+| **Slack** | 团队沟通 | send_message, list_channels | Token | ✅ 是 |
+| **Database** | SQL 查询 | query, insert, update | 凭据 | ✅ 是 |
+| **Google Docs** | 文档访问 | read, write, share | OAuth | ✅ 是 |
+| **Asana** | 项目管理 | create_task, update_status | API Key | ✅ 是 |
+| **Stripe** | 支付数据 | list_charges, create_invoice | API Key | ✅ 是 |
+| **Memory** | 持久记忆 | store, retrieve, delete | 本地 | ❌ 否 |
 
-## Practical Examples
+<a id="practical-examples"></a>
+## 实践示例
 
-### Example 1: GitHub MCP Configuration
+<a id="example-1-github-mcp-configuration"></a>
+### 示例 1：GitHub MCP 配置
 
-**File:** `.mcp.json` (project root)
+**文件：** `.mcp.json`（项目根目录）
 
 ```json
 {
@@ -342,17 +369,18 @@ claude mcp add-from-claude-desktop
 }
 ```
 
-**Available GitHub MCP Tools:**
+**GitHub MCP 可用工具：**
 
-#### Pull Request Management
-- `list_prs` - List all PRs in repository
-- `get_pr` - Get PR details including diff
-- `create_pr` - Create new PR
-- `update_pr` - Update PR description/title
-- `merge_pr` - Merge PR to main branch
-- `review_pr` - Add review comments
+<a id="pull-request-management"></a>
+#### Pull Request 管理
+- `list_prs` - 列出仓库内所有 PR
+- `get_pr` - 获取 PR 详情（含 diff）
+- `create_pr` - 创建新 PR
+- `update_pr` - 更新 PR 描述/标题
+- `merge_pr` - 将 PR 合并到 main
+- `review_pr` - 添加评审评论
 
-**Example request:**
+**示例请求：**
 ```
 /mcp__github__get_pr 456
 
@@ -364,34 +392,38 @@ Status: OPEN
 Reviewers: @bob, @charlie
 ```
 
-#### Issue Management
-- `list_issues` - List all issues
-- `get_issue` - Get issue details
-- `create_issue` - Create new issue
-- `close_issue` - Close issue
-- `add_comment` - Add comment to issue
+<a id="issue-management"></a>
+#### Issue 管理
+- `list_issues` - 列出所有 issue
+- `get_issue` - 获取 issue 详情
+- `create_issue` - 创建新 issue
+- `close_issue` - 关闭 issue
+- `add_comment` - 在 issue 下添加评论
 
-#### Repository Information
-- `get_repo_info` - Repository details
-- `list_files` - File tree structure
-- `get_file_content` - Read file contents
-- `search_code` - Search across codebase
+<a id="repository-information"></a>
+#### 仓库信息
+- `get_repo_info` - 仓库详情
+- `list_files` - 文件树结构
+- `get_file_content` - 读取文件内容
+- `search_code` - 在代码库中搜索
 
-#### Commit Operations
-- `list_commits` - Commit history
-- `get_commit` - Specific commit details
-- `create_commit` - Create new commit
+<a id="commit-operations"></a>
+#### 提交操作
+- `list_commits` - 提交历史
+- `get_commit` - 指定提交的详情
+- `create_commit` - 创建新提交
 
-**Setup**:
+**配置：**
 ```bash
 export GITHUB_TOKEN="your_github_token"
 # Or use the CLI to add directly:
 claude mcp add --transport stdio github -- npx @modelcontextprotocol/server-github
 ```
 
-### Environment Variable Expansion in Configuration
+<a id="environment-variable-expansion-in-configuration"></a>
+### 配置中的环境变量展开
 
-MCP configurations support environment variable expansion with fallback defaults. The `${VAR}` and `${VAR:-default}` syntax works in the following fields: `command`, `args`, `env`, `url`, and `headers`.
+MCP 配置支持带默认回退的环境变量展开。`${VAR}` 与 `${VAR:-default}` 语法适用于以下字段：`command`、`args`、`env`、`url`、`headers`。
 
 ```json
 {
@@ -415,13 +447,14 @@ MCP configurations support environment variable expansion with fallback defaults
 }
 ```
 
-Variables are expanded at runtime:
-- `${VAR}` - Uses environment variable, error if not set
-- `${VAR:-default}` - Uses environment variable, falls back to default if not set
+变量在运行时展开：
+- `${VAR}` - 使用环境变量，未设置则报错
+- `${VAR:-default}` - 使用环境变量，未设置则使用默认值
 
-### Example 2: Database MCP Setup
+<a id="example-2-database-mcp-setup"></a>
+### 示例 2：Database MCP 搭建
 
-**Configuration:**
+**配置：**
 
 ```json
 {
@@ -437,7 +470,7 @@ Variables are expanded at runtime:
 }
 ```
 
-**Example Usage:**
+**示例用法：**
 
 ```markdown
 User: Fetch all users with more than 10 orders
@@ -458,16 +491,17 @@ ORDER BY order_count DESC;
 - Charlie: 11 orders
 ```
 
-**Setup**:
+**配置：**
 ```bash
 export DATABASE_URL="postgresql://user:pass@localhost/mydb"
 # Or use the CLI to add directly:
 claude mcp add --transport stdio database -- npx @modelcontextprotocol/server-database
 ```
 
-### Example 3: Multi-MCP Workflow
+<a id="example-3-multi-mcp-workflow"></a>
+### 示例 3：多 MCP 工作流
 
-**Scenario: Daily Report Generation**
+**场景：每日报告生成**
 
 ```markdown
 # Daily Report Workflow using Multiple MCPs
@@ -512,7 +546,7 @@ Final Output:
 💰 $12,450 in daily sales
 ```
 
-**Setup**:
+**配置：**
 ```bash
 export GITHUB_TOKEN="your_github_token"
 export DATABASE_URL="postgresql://user:pass@localhost/mydb"
@@ -520,9 +554,10 @@ export SLACK_TOKEN="your_slack_token"
 # Add each MCP server via the CLI or configure them in .mcp.json
 ```
 
-### Example 4: Filesystem MCP Operations
+<a id="example-4-filesystem-mcp-operations"></a>
+### 示例 4：Filesystem MCP 操作
 
-**Configuration:**
+**配置：**
 
 ```json
 {
@@ -535,24 +570,25 @@ export SLACK_TOKEN="your_slack_token"
 }
 ```
 
-**Available Operations:**
+**可用操作：**
 
-| Operation | Command | Purpose |
+| 操作 | 命令 | 用途 |
 |-----------|---------|---------|
-| List files | `ls ~/projects` | Show directory contents |
-| Read file | `cat src/main.ts` | Read file contents |
-| Write file | `create docs/api.md` | Create new file |
-| Edit file | `edit src/app.ts` | Modify file |
-| Search | `grep "async function"` | Search in files |
-| Delete | `rm old-file.js` | Delete file |
+| List files | `ls ~/projects` | 显示目录内容 |
+| Read file | `cat src/main.ts` | 读取文件内容 |
+| Write file | `create docs/api.md` | 创建新文件 |
+| Edit file | `edit src/app.ts` | 修改文件 |
+| Search | `grep "async function"` | 在文件中搜索 |
+| Delete | `rm old-file.js` | 删除文件 |
 
-**Setup**:
+**配置：**
 ```bash
 # Use the CLI to add directly:
 claude mcp add --transport stdio filesystem -- npx @modelcontextprotocol/server-filesystem /home/user/projects
 ```
 
-## MCP vs Memory: Decision Matrix
+<a id="mcp-vs-memory-decision-matrix"></a>
+## MCP 与 Memory：决策矩阵
 
 ```mermaid
 graph TD
@@ -573,7 +609,8 @@ graph TD
     style F fill:#e8f5e9,stroke:#333,color:#333
 ```
 
-## Request/Response Pattern
+<a id="requestresponse-pattern"></a>
+## 请求/响应模式
 
 ```mermaid
 sequenceDiagram
@@ -591,9 +628,10 @@ sequenceDiagram
     Note over MCP,DB: Real-time access<br/>No caching
 ```
 
-## Environment Variables
+<a id="environment-variables"></a>
+## 环境变量
 
-Store sensitive credentials in environment variables:
+将敏感凭据放在环境变量中：
 
 ```bash
 # ~/.bashrc or ~/.zshrc
@@ -602,7 +640,7 @@ export DATABASE_URL="postgresql://user:pass@localhost/mydb"
 export SLACK_TOKEN="xoxb-xxxxxxxxxxxxx"
 ```
 
-Then reference them in MCP config:
+然后在 MCP 配置中引用：
 
 ```json
 {
@@ -612,40 +650,42 @@ Then reference them in MCP config:
 }
 ```
 
-## Claude as MCP Server (`claude mcp serve`)
+<a id="claude-as-mcp-server-claude-mcp-serve"></a>
+## 将 Claude 作为 MCP 服务器（`claude mcp serve`）
 
-Claude Code itself can act as an MCP server for other applications. This enables external tools, editors, and automation systems to leverage Claude's capabilities through the standard MCP protocol.
+Claude Code 自身也可作为 MCP 服务器供其他应用使用。这样外部工具、编辑器与自动化系统可通过标准 MCP 协议使用 Claude 的能力。
 
 ```bash
 # Start Claude Code as an MCP server on stdio
 claude mcp serve
 ```
 
-Other applications can then connect to this server as they would any stdio-based MCP server. For example, to add Claude Code as an MCP server in another Claude Code instance:
+其他应用可像连接任意基于 stdio 的 MCP 服务器一样连接该服务。例如，在另一个 Claude Code 实例中将 Claude Code 添加为 MCP 服务器：
 
 ```bash
 claude mcp add --transport stdio claude-agent -- claude mcp serve
 ```
 
-This is useful for building multi-agent workflows where one Claude instance orchestrates another.
+适用于构建多智能体工作流，由一个 Claude 实例编排另一个实例。
 
-## Managed MCP Configuration (Enterprise)
+<a id="managed-mcp-configuration-enterprise"></a>
+## 托管 MCP 配置（企业版）
 
-For enterprise deployments, IT administrators can enforce MCP server policies through the `managed-mcp.json` configuration file. This file provides exclusive control over which MCP servers are permitted or blocked organization-wide.
+在企业部署中，IT 管理员可通过 `managed-mcp.json` 配置文件强制执行 MCP 服务器策略。该文件可集中控制组织范围内允许或禁止的 MCP 服务器。
 
-**Location:**
+**位置：**
 - macOS: `/Library/Application Support/ClaudeCode/managed-mcp.json`
 - Linux: `~/.config/ClaudeCode/managed-mcp.json`
 - Windows: `%APPDATA%\ClaudeCode\managed-mcp.json`
 
-**Features:**
-- `allowedMcpServers` -- whitelist of permitted servers
-- `deniedMcpServers` -- blocklist of prohibited servers
-- Supports matching by server name, command, and URL patterns
-- Organization-wide MCP policies enforced before user configuration
-- Prevents unauthorized server connections
+**功能：**
+- `allowedMcpServers` — 允许列表
+- `deniedMcpServers` — 禁止列表
+- 支持按服务器名称、命令与 URL 模式匹配
+- 在用户配置之前强制执行组织级 MCP 策略
+- 阻止未授权的服务器连接
 
-**Example configuration:**
+**配置示例：**
 
 ```json
 {
@@ -670,16 +710,17 @@ For enterprise deployments, IT administrators can enforce MCP server policies th
 }
 ```
 
-> **Note:** When both `allowedMcpServers` and `deniedMcpServers` match a server, the deny rule takes precedence.
+> **说明：** 若某服务器同时匹配 `allowedMcpServers` 与 `deniedMcpServers`，以禁止规则为准。
 
-## Plugin-Provided MCP Servers
+<a id="plugin-provided-mcp-servers"></a>
+## 插件提供的 MCP 服务器
 
-Plugins can bundle their own MCP servers, making them available automatically when the plugin is installed. Plugin-provided MCP servers can be defined in two ways:
+插件可打包自带 MCP 服务器，安装插件后即可自动可用。插件提供的 MCP 服务器有两种定义方式：
 
-1. **Standalone `.mcp.json`** -- Place a `.mcp.json` file in the plugin root directory
-2. **Inline in `plugin.json`** -- Define MCP servers directly within the plugin manifest
+1. **独立 `.mcp.json`** — 在插件根目录放置 `.mcp.json`
+2. **内联于 `plugin.json`** — 在插件清单中直接定义 MCP 服务器
 
-Use the `${CLAUDE_PLUGIN_ROOT}` variable to reference paths relative to the plugin's installation directory:
+使用 `${CLAUDE_PLUGIN_ROOT}` 变量引用相对于插件安装目录的路径：
 
 ```json
 {
@@ -695,9 +736,10 @@ Use the `${CLAUDE_PLUGIN_ROOT}` variable to reference paths relative to the plug
 }
 ```
 
-## Subagent-Scoped MCP
+<a id="subagent-scoped-mcp"></a>
+## Subagent 作用域内的 MCP
 
-MCP servers can be defined inline within agent frontmatter using the `mcpServers:` key, scoping them to a specific subagent rather than the entire project. This is useful when an agent needs access to a particular MCP server that other agents in the workflow do not require.
+可在智能体 frontmatter 中用 `mcpServers:` 键内联定义 MCP 服务器，使其仅作用于特定 subagent，而非整个项目。适用于某智能体需要某 MCP 服务器，而同工作流中的其他智能体不需要时。
 
 ```yaml
 ---
@@ -710,40 +752,43 @@ mcpServers:
 You are an agent with access to my-tool for specialized operations.
 ```
 
-Subagent-scoped MCP servers are only available within that agent's execution context and are not shared with the parent or sibling agents.
+Subagent 作用域内的 MCP 服务器仅在该智能体的执行上下文中可用，不会与父级或同级智能体共享。
 
-## MCP Output Limits
+<a id="mcp-output-limits"></a>
+## MCP 输出限制
 
-Claude Code enforces limits on MCP tool output to prevent context overflow:
+Claude Code 对 MCP 工具输出设有限制，以防上下文溢出：
 
-| Limit | Threshold | Behavior |
+| 限制 | 阈值 | 行为 |
 |-------|-----------|----------|
-| **Warning** | 10,000 tokens | A warning is displayed that the output is large |
-| **Default max** | 25,000 tokens | Output is truncated beyond this limit |
-| **Disk persistence** | 50,000 characters | Tool results exceeding 50K characters are persisted to disk |
+| **警告** | 10,000 tokens | 提示输出体积较大 |
+| **默认上限** | 25,000 tokens | 超过此限制会截断输出 |
+| **磁盘持久化** | 50,000 字符 | 超过 50K 字符的工具结果会写入磁盘 |
 
-The maximum output limit is configurable via the `MAX_MCP_OUTPUT_TOKENS` environment variable:
+可通过环境变量 `MAX_MCP_OUTPUT_TOKENS` 配置最大输出上限：
 
 ```bash
 # Increase the max output to 50,000 tokens
 export MAX_MCP_OUTPUT_TOKENS=50000
 ```
 
-## Solving Context Bloat with Code Execution
+<a id="solving-context-bloat-with-code-execution"></a>
+## 用代码执行缓解上下文膨胀
 
-As MCP adoption scales, connecting to dozens of servers with hundreds or thousands of tools creates a significant challenge: **context bloat**. This is arguably the biggest problem with MCP at scale, and Anthropic's engineering team has proposed an elegant solution — using code execution instead of direct tool calls.
+随着 MCP 普及，连接数十个服务器与成百上千个工具会带来严峻挑战：**上下文膨胀**。这可以说是大规模使用 MCP 时的首要问题，Anthropic 工程团队提出了一种思路——用代码执行替代直接工具调用。
 
-> **Source**: [Code Execution with MCP: Building More Efficient Agents](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic Engineering Blog
+> **来源**：[Code Execution with MCP: Building More Efficient Agents](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic 工程博客
 
-### The Problem: Two Sources of Token Waste
+<a id="the-problem-two-sources-of-token-waste"></a>
+### 问题：两类 token 浪费
 
-**1. Tool definitions overload the context window**
+**1. 工具定义挤占上下文窗口**
 
-Most MCP clients load all tool definitions upfront. When connected to thousands of tools, the model must process hundreds of thousands of tokens before it even reads the user's request.
+多数 MCP 客户端会预先加载全部工具定义。连接数千个工具时，模型在处理用户请求前就要消化数十万 token。
 
-**2. Intermediate results consume additional tokens**
+**2. 中间结果额外消耗 token**
 
-Every intermediate tool result passes through the model's context. Consider transferring a meeting transcript from Google Drive to Salesforce — the full transcript flows through context **twice**: once when reading it, and again when writing it to the destination. A 2-hour meeting transcript could mean 50,000+ extra tokens.
+每个中间工具结果都会进入模型上下文。例如把会议记录从 Google Drive 转到 Salesforce——完整逐字稿会在上下文中**经过两次**：一次读取，一次写入目标。一场 2 小时会议的逐字稿可能意味着额外 5 万+ token。
 
 ```mermaid
 graph LR
@@ -756,9 +801,10 @@ graph LR
     style B fill:#f3e5f5,stroke:#333,color:#333
 ```
 
-### The Solution: MCP Tools as Code APIs
+<a id="the-solution-mcp-tools-as-code-apis"></a>
+### 方案：将 MCP 工具当作代码 API
 
-Instead of passing tool definitions and results through the context window, the agent **writes code** that calls MCP tools as APIs. The code runs in a sandboxed execution environment, and only the final result returns to the model.
+不把工具定义与结果经由上下文窗口传递，而是由智能体**编写代码**，将 MCP 工具作为 API 调用。代码在沙箱执行环境中运行，仅将最终结果返回模型。
 
 ```mermaid
 graph LR
@@ -772,9 +818,10 @@ graph LR
     style C fill:#f3e5f5,stroke:#333,color:#333
 ```
 
-#### How It Works
+<a id="how-it-works"></a>
+#### 工作原理
 
-MCP tools are presented as a file tree of typed functions:
+MCP 工具以类型化函数构成的文件树形式呈现：
 
 ```
 servers/
@@ -787,7 +834,7 @@ servers/
 └── ...
 ```
 
-Each tool file contains a typed wrapper:
+每个工具文件包含类型化封装：
 
 ```typescript
 // ./servers/google-drive/getDocument.ts
@@ -810,7 +857,7 @@ export async function getDocument(
 }
 ```
 
-The agent then writes code to orchestrate the tools:
+智能体再编写代码编排工具：
 
 ```typescript
 import * as gdrive from './servers/google-drive';
@@ -828,19 +875,21 @@ await salesforce.updateRecord({
 });
 ```
 
-**Result: Token usage drops from ~150,000 to ~2,000 — a 98.7% reduction.**
+**结果：token 用量从约 150,000 降至约 2,000，降幅约 98.7%。**
 
-### Key Benefits
+<a id="key-benefits"></a>
+### 主要优势
 
-| Benefit | Description |
+| 优势 | 说明 |
 |---------|-------------|
-| **Progressive Disclosure** | Agent browses the filesystem to load only the tool definitions it needs, instead of all tools upfront |
-| **Context-Efficient Results** | Data is filtered/transformed in the execution environment before returning to the model |
-| **Powerful Control Flow** | Loops, conditionals, and error handling run in code without round-tripping through the model |
-| **Privacy Preservation** | Intermediate data (PII, sensitive records) stays in the execution environment; never enters the model context |
-| **State Persistence** | Agents can save intermediate results to files and build reusable skill functions |
+| **渐进式披露** | 智能体浏览文件系统，仅加载需要的工具定义，而非一次性加载全部 |
+| **上下文高效的结果** | 数据在返回模型前于执行环境中过滤/转换 |
+| **强大的控制流** | 循环、条件与错误处理在代码中执行，无需反复经过模型 |
+| **隐私保护** | 中间数据（PII、敏感记录）留在执行环境，不进入模型上下文 |
+| **状态持久化** | 智能体可将中间结果写入文件并构建可复用的技能函数 |
 
-#### Example: Filtering Large Datasets
+<a id="example-filtering-large-datasets"></a>
+#### 示例：过滤大数据集
 
 ```typescript
 // Without code execution — all 10,000 rows flow through context
@@ -856,7 +905,8 @@ console.log(`Found ${pendingOrders.length} pending orders`);
 console.log(pendingOrders.slice(0, 5)); // Only 5 rows reach the model
 ```
 
-#### Example: Loop Without Round-Tripping
+<a id="example-loop-without-round-tripping"></a>
+#### 示例：无往返轮询的循环
 
 ```typescript
 // Poll for a deployment notification — runs entirely in code
@@ -873,33 +923,35 @@ while (!found) {
 console.log('Deployment notification received');
 ```
 
-### Trade-offs to Consider
+<a id="trade-offs-to-consider"></a>
+### 需要权衡之处
 
-Code execution introduces its own complexity. Running agent-generated code requires:
+代码执行会引入额外复杂度。运行智能体生成的代码需要：
 
-- A **secure sandboxed execution environment** with appropriate resource limits
-- **Monitoring and logging** of executed code
-- Additional **infrastructure overhead** compared to direct tool calls
+- 具备适当资源限制的**安全沙箱执行环境**
+- 对执行代码的**监控与日志**
+- 相较直接工具调用更高的**基础设施开销**
 
-The benefits — reduced token costs, lower latency, improved tool composition — should be weighed against these implementation costs. For agents with only a few MCP servers, direct tool calls may be simpler. For agents at scale (dozens of servers, hundreds of tools), code execution is a significant improvement.
+应将收益（降低 token 成本、降低延迟、改进工具组合）与实现成本权衡。若仅有少量 MCP 服务器，直接工具调用可能更简单；若在较大规模（数十服务器、数百工具），代码执行收益显著。
 
-### MCPorter: A Runtime for MCP Tool Composition
+<a id="mcporter-a-runtime-for-mcp-tool-composition"></a>
+### MCPorter：MCP 工具组合的运行时
 
-[MCPorter](https://github.com/steipete/mcporter) is a TypeScript runtime and CLI toolkit that makes calling MCP servers practical without boilerplate — and helps reduce context bloat through selective tool exposure and typed wrappers.
+[MCPorter](https://github.com/steipete/mcporter) 是 TypeScript 运行时与 CLI 工具包，让调用 MCP 服务器更省事、少样板代码，并通过选择性暴露工具与类型化封装帮助减轻上下文膨胀。
 
-**What it solves:** Instead of loading all tool definitions from all MCP servers upfront, MCPorter lets you discover, inspect, and call specific tools on demand — keeping your context lean.
+**解决的问题：** 不必预先从所有 MCP 服务器加载全部工具定义，可按需发现、检查并调用特定工具，保持上下文精简。
 
-**Key features:**
+**主要特性：**
 
-| Feature | Description |
+| 特性 | 说明 |
 |---------|-------------|
-| **Zero-config discovery** | Auto-discovers MCP servers from Cursor, Claude, Codex, or local configs |
-| **Typed tool clients** | `mcporter emit-ts` generates `.d.ts` interfaces and ready-to-run wrappers |
-| **Composable API** | `createServerProxy()` exposes tools as camelCase methods with `.text()`, `.json()`, `.markdown()` helpers |
-| **CLI generation** | `mcporter generate-cli` converts any MCP server into a standalone CLI with `--include-tools` / `--exclude-tools` filtering |
-| **Parameter hiding** | Optional parameters stay hidden by default, reducing schema verbosity |
+| **零配置发现** | 从 Cursor、Claude、Codex 或本地配置自动发现 MCP 服务器 |
+| **类型化工具客户端** | `mcporter emit-ts` 生成 `.d.ts` 接口与可直接运行的封装 |
+| **可组合 API** | `createServerProxy()` 将工具暴露为 camelCase 方法，并提供 `.text()`、`.json()`、`.markdown()` 等辅助函数 |
+| **CLI 生成** | `mcporter generate-cli` 将任意 MCP 服务器转为独立 CLI，支持 `--include-tools` / `--exclude-tools` 过滤 |
+| **参数隐藏** | 可选参数默认隐藏，减少 schema 冗长度 |
 
-**Installation:**
+**安装：**
 
 ```bash
 npx mcporter list          # No install required — discover servers instantly
@@ -907,7 +959,7 @@ pnpm add mcporter          # Add to a project
 brew install steipete/tap/mcporter  # macOS via Homebrew
 ```
 
-**Example — composing tools in TypeScript:**
+**示例 — 在 TypeScript 中组合工具：**
 
 ```typescript
 import { createRuntime, createServerProxy } from "mcporter";
@@ -925,7 +977,7 @@ await salesforce.updateRecord({
 });
 ```
 
-**Example — CLI tool call:**
+**示例 — CLI 工具调用：**
 
 ```bash
 # Call a specific tool directly
@@ -935,67 +987,76 @@ npx mcporter call linear.create_comment issueId:ENG-123 body:'Looks good!'
 npx mcporter list
 ```
 
-MCPorter complements the code-execution approach described above by providing the runtime infrastructure for calling MCP tools as typed APIs — making it straightforward to keep intermediate data out of the model context.
+MCPorter 通过提供将 MCP 工具作为类型化 API 调用的运行时基础设施，与上文代码执行思路互补，便于将中间数据留在模型上下文之外。
 
-## Best Practices
+<a id="best-practices"></a>
+## 最佳实践
 
-### Security Considerations
+<a id="security-considerations"></a>
+### 安全注意事项
 
-#### Do's ✅
-- Use environment variables for all credentials
-- Rotate tokens and API keys regularly (monthly recommended)
-- Use read-only tokens when possible
-- Limit MCP server access scope to minimum required
-- Monitor MCP server usage and access logs
-- Use OAuth for external services when available
-- Implement rate limiting on MCP requests
-- Test MCP connections before production use
-- Document all active MCP connections
-- Keep MCP server packages updated
+<a id="dos"></a>
+#### 建议 ✅
+- 所有凭据使用环境变量
+- 定期轮换 token 与 API 密钥（建议每月）
+- 尽量使用只读 token
+- 将 MCP 服务器访问范围限制在最小必要
+- 监控 MCP 服务器使用与访问日志
+- 对外部服务尽量使用 OAuth
+- 对 MCP 请求实施速率限制
+- 生产使用前测试 MCP 连接
+- 文档化所有活跃 MCP 连接
+- 保持 MCP 服务器包为最新
 
-#### Don'ts ❌
-- Don't hardcode credentials in config files
-- Don't commit tokens or secrets to git
-- Don't share tokens in team chats or emails
-- Don't use personal tokens for team projects
-- Don't grant unnecessary permissions
-- Don't ignore authentication errors
-- Don't expose MCP endpoints publicly
-- Don't run MCP servers with root/admin privileges
-- Don't cache sensitive data in logs
-- Don't disable authentication mechanisms
+<a id="donts"></a>
+#### 避免 ❌
+- 不要在配置文件中硬编码凭据
+- 不要将 token 或密钥提交到 git
+- 不要在团队聊天或邮件中分享 token
+- 不要在团队项目中使用个人 token
+- 不要授予不必要权限
+- 不要忽略认证错误
+- 不要公开暴露 MCP 端点
+- 不要使用 root/管理员权限运行 MCP 服务器
+- 不要在日志中缓存敏感数据
+- 不要关闭认证机制
 
-### Configuration Best Practices
+<a id="configuration-best-practices"></a>
+### 配置最佳实践
 
-1. **Version Control**: Keep `.mcp.json` in git but use environment variables for secrets
-2. **Least Privilege**: Grant minimum permissions needed for each MCP server
-3. **Isolation**: Run different MCP servers in separate processes when possible
-4. **Monitoring**: Log all MCP requests and errors for audit trails
-5. **Testing**: Test all MCP configurations before deploying to production
+1. **版本控制**：将 `.mcp.json` 纳入 git，密钥用环境变量
+2. **最小权限**：每个 MCP 服务器仅授予所需最小权限
+3. **隔离**：尽量在不同进程中运行不同 MCP 服务器
+4. **监控**：记录所有 MCP 请求与错误以便审计
+5. **测试**：上线前测试所有 MCP 配置
 
-### Performance Tips
+<a id="performance-tips"></a>
+### 性能提示
 
-- Cache frequently accessed data at the application level
-- Use MCP queries that are specific to reduce data transfer
-- Monitor response times for MCP operations
-- Consider rate limiting for external APIs
-- Use batching when performing multiple operations
+- 在应用层缓存频繁访问的数据
+- 使用更具体的 MCP 查询以减少数据传输
+- 监控 MCP 操作的响应时间
+- 考虑对外部 API 做速率限制
+- 批量执行多个操作时尽量批处理
 
-## Installation Instructions
+<a id="installation-instructions"></a>
+## 安装说明
 
-### Prerequisites
-- Node.js and npm installed
-- Claude Code CLI installed
-- API tokens/credentials for external services
+<a id="prerequisites"></a>
+### 前置条件
+- 已安装 Node.js 与 npm
+- 已安装 Claude Code CLI
+- 外部服务的 API token/凭据
 
-### Step-by-Step Setup
+<a id="step-by-step-setup"></a>
+### 分步配置
 
-1. **Add your first MCP server** using the CLI (example: GitHub):
+1. **添加第一个 MCP 服务器**（示例：GitHub）：
 ```bash
 claude mcp add --transport stdio github -- npx @modelcontextprotocol/server-github
 ```
 
-   Or create a `.mcp.json` file in your project root:
+   或在项目根目录创建 `.mcp.json`：
 ```json
 {
   "mcpServers": {
@@ -1010,47 +1071,50 @@ claude mcp add --transport stdio github -- npx @modelcontextprotocol/server-gith
 }
 ```
 
-2. **Set environment variables:**
+2. **设置环境变量：**
 ```bash
 export GITHUB_TOKEN="your_github_personal_access_token"
 ```
 
-3. **Test the connection:**
+3. **测试连接：**
 ```bash
 claude /mcp
 ```
 
-4. **Use MCP tools:**
+4. **使用 MCP 工具：**
 ```bash
 /mcp__github__list_prs
 /mcp__github__create_issue "Title" "Description"
 ```
 
-### Installation for Specific Services
+<a id="installation-for-specific-services"></a>
+### 特定服务安装
 
-**GitHub MCP:**
+**GitHub MCP：**
 ```bash
 npm install -g @modelcontextprotocol/server-github
 ```
 
-**Database MCP:**
+**Database MCP：**
 ```bash
 npm install -g @modelcontextprotocol/server-database
 ```
 
-**Filesystem MCP:**
+**Filesystem MCP：**
 ```bash
 npm install -g @modelcontextprotocol/server-filesystem
 ```
 
-**Slack MCP:**
+**Slack MCP：**
 ```bash
 npm install -g @modelcontextprotocol/server-slack
 ```
 
-## Troubleshooting
+<a id="troubleshooting"></a>
+## 故障排除
 
-### MCP Server Not Found
+<a id="mcp-server-not-found"></a>
+### 找不到 MCP 服务器
 ```bash
 # Verify MCP server is installed
 npm list -g @modelcontextprotocol/server-github
@@ -1059,7 +1123,8 @@ npm list -g @modelcontextprotocol/server-github
 npm install -g @modelcontextprotocol/server-github
 ```
 
-### Authentication Failed
+<a id="authentication-failed"></a>
+### 认证失败
 ```bash
 # Verify environment variable is set
 echo $GITHUB_TOKEN
@@ -1071,42 +1136,49 @@ export GITHUB_TOKEN="your_token"
 # Check GitHub token scopes at: https://github.com/settings/tokens
 ```
 
-### Connection Timeout
-- Check network connectivity: `ping api.github.com`
-- Verify API endpoint is accessible
-- Check rate limits on API
-- Try increasing timeout in config
-- Check for firewall or proxy issues
+<a id="connection-timeout"></a>
+### 连接超时
+- 检查网络连通性：`ping api.github.com`
+- 确认 API 端点可访问
+- 检查 API 速率限制
+- 尝试在配置中增大超时
+- 排查防火墙或代理问题
 
-### MCP Server Crashes
-- Check MCP server logs: `~/.claude/logs/`
-- Verify all environment variables are set
-- Ensure proper file permissions
-- Try reinstalling the MCP server package
-- Check for conflicting processes on the same port
+<a id="mcp-server-crashes"></a>
+### MCP 服务器崩溃
+- 查看 MCP 服务器日志：`~/.claude/logs/`
+- 确认所有环境变量已设置
+- 确认文件权限正确
+- 尝试重新安装 MCP 服务器包
+- 检查同一端口是否有冲突进程
 
-## Related Concepts
+<a id="related-concepts"></a>
+## 相关概念
 
-### Memory vs MCP
-- **Memory**: Stores persistent, unchanging data (preferences, context, history)
-- **MCP**: Accesses live, changing data (APIs, databases, real-time services)
+<a id="memory-vs-mcp"></a>
+### Memory 与 MCP
+- **Memory**：存储持久、相对静态的数据（偏好、上下文、历史）
+- **MCP**：访问实时、变化中的数据（API、数据库、实时服务）
 
-### When to Use Each
-- **Use Memory** for: User preferences, conversation history, learned context
-- **Use MCP** for: Current GitHub issues, live database queries, real-time data
+<a id="when-to-use-each"></a>
+### 何时用哪一种
+- **用 Memory**：用户偏好、对话历史、已学习的上下文
+- **用 MCP**：当前 GitHub issue、实时数据库查询、实时数据
 
-### Integration with Other Claude Features
-- Combine MCP with Memory for rich context
-- Use MCP tools in prompts for better reasoning
-- Leverage multiple MCPs for complex workflows
+<a id="integration-with-other-claude-features"></a>
+### 与其他 Claude 功能的结合
+- 将 MCP 与 Memory 结合以获得更丰富的上下文
+- 在提示词中使用 MCP 工具以改进推理
+- 对复杂工作流组合多个 MCP
 
-## Additional Resources
+<a id="additional-resources"></a>
+## 延伸阅读
 
 - [Official MCP Documentation](https://code.claude.com/docs/en/mcp)
 - [MCP Protocol Specification](https://modelcontextprotocol.io/specification)
 - [MCP GitHub Repository](https://github.com/modelcontextprotocol/servers)
 - [Available MCP Servers](https://github.com/modelcontextprotocol/servers)
-- [MCPorter](https://github.com/steipete/mcporter) — TypeScript runtime & CLI for calling MCP servers without boilerplate
-- [Code Execution with MCP](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic's engineering blog on solving context bloat
+- [MCPorter](https://github.com/steipete/mcporter) — 以 TypeScript 运行时与 CLI 无样板调用 MCP 服务器
+- [Code Execution with MCP](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic 关于缓解上下文膨胀的工程博客
 - [Claude Code CLI Reference](https://code.claude.com/docs/en/cli-reference)
 - [Claude API Documentation](https://docs.anthropic.com)
