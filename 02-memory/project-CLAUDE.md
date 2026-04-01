@@ -28,7 +28,7 @@
 
 ### Git 工作流
 - 分支命名：`feature/description` 或 `fix/description`
-- Commit message：遵循 conventional commits
+- 提交信息：遵循 conventional commits
 - 合并前必须先创建 PR
 - 所有 CI/CD 检查都必须通过
 - 至少需要 1 个批准
@@ -41,17 +41,17 @@
 - 测试文件命名：`*.test.ts` 或 `*.spec.ts`
 
 ### API 标准
-- 仅使用 RESTful endpoints
-- 使用 JSON request/response
-- 正确使用 HTTP status codes
-- API endpoint 版本前缀：`/api/v1/`
-- 为所有 endpoints 编写带示例的文档
+- 仅使用 RESTful 端点
+- 请求与响应使用 JSON
+- 正确使用 HTTP 状态码
+- API 路径版本前缀：`/api/v1/`
+- 为所有端点编写带示例的文档
 
 ### 数据库
-- 使用 migrations 管理 schema 变更
+- 使用数据库迁移管理 schema 变更
 - 绝不要硬编码凭据
 - 使用连接池
-- 在开发环境启用 query logging
+- 在开发环境启用查询日志
 - 必须定期备份
 
 ### 部署
@@ -78,9 +78,9 @@
 
 ## 已知问题与变通方案
 - PostgreSQL 连接池在高峰时段限制为 20
-- Workaround: 实现查询排队
+- 变通方案：实现查询排队
 - Safari 14 与 async generators 存在兼容性问题
-- Workaround: 使用 Babel transpiler
+- 变通方案：使用 Babel 转译器
 
 ## 相关项目
 - 数据分析看板: `/projects/analytics`

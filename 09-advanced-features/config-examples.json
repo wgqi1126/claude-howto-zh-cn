@@ -1,10 +1,10 @@
 {
-  "description": "Example Claude Code configurations for different use cases",
+  "description": "面向不同使用场景的 Claude Code 配置示例",
 
   "examples": {
     "development": {
-      "name": "Development Environment",
-      "description": "Configuration for active development work",
+      "name": "开发环境",
+      "description": "面向活跃开发工作的配置",
       "config": {
         "general": {
           "model": "claude-sonnet-4-5",
@@ -31,8 +31,8 @@
     },
 
     "code_review": {
-      "name": "Code Review Mode",
-      "description": "Configuration for reviewing code without modifications",
+      "name": "代码审查模式",
+      "description": "在不修改代码的前提下审查代码时使用的配置",
       "config": {
         "general": {
           "model": "claude-sonnet-4-5",
@@ -52,8 +52,8 @@
     },
 
     "learning": {
-      "name": "Learning Mode",
-      "description": "Configuration for learning and experimentation",
+      "name": "学习模式",
+      "description": "面向学习与实验的配置",
       "config": {
         "general": {
           "model": "claude-sonnet-4-5",
@@ -78,8 +78,8 @@
     },
 
     "production": {
-      "name": "Production Deployment",
-      "description": "Configuration for production operations with safety checks",
+      "name": "生产部署",
+      "description": "面向生产操作并带有安全检查的配置",
       "config": {
         "general": {
           "model": "claude-opus-4",
@@ -105,8 +105,8 @@
     },
 
     "ci_cd": {
-      "name": "CI/CD Pipeline",
-      "description": "Configuration for automated CI/CD operations",
+      "name": "CI/CD 流水线",
+      "description": "面向自动化 CI/CD 操作的配置",
       "config": {
         "general": {
           "model": "claude-sonnet-4-5",
@@ -132,8 +132,8 @@
     },
 
     "security_audit": {
-      "name": "Security Audit",
-      "description": "Configuration for security-focused code analysis",
+      "name": "安全审计",
+      "description": "面向以安全为重点的代码分析的配置",
       "config": {
         "general": {
           "model": "claude-opus-4",
@@ -154,8 +154,8 @@
     },
 
     "performance_optimization": {
-      "name": "Performance Optimization",
-      "description": "Configuration for performance analysis and optimization",
+      "name": "性能优化",
+      "description": "面向性能分析与优化的配置",
       "config": {
         "general": {
           "model": "claude-sonnet-4-5",
@@ -176,8 +176,8 @@
     },
 
     "pair_programming": {
-      "name": "Pair Programming",
-      "description": "Configuration for collaborative development",
+      "name": "结对编程",
+      "description": "面向协作开发的配置",
       "config": {
         "general": {
           "model": "claude-sonnet-4-5",
@@ -203,8 +203,8 @@
     },
 
     "refactoring": {
-      "name": "Large Refactoring",
-      "description": "Configuration for major refactoring work",
+      "name": "大规模重构",
+      "description": "面向重大重构工作的配置",
       "config": {
         "general": {
           "model": "claude-opus-4",
@@ -229,8 +229,8 @@
     },
 
     "autonomous": {
-      "name": "Autonomous Development",
-      "description": "Configuration for autonomous work with auto mode safety checks",
+      "name": "自主开发",
+      "description": "面向自主工作并带有自动模式安全检查的配置",
       "config": {
         "general": {
           "model": "claude-sonnet-4-6",
@@ -251,8 +251,8 @@
     },
 
     "documentation": {
-      "name": "Documentation Writing",
-      "description": "Configuration for writing documentation",
+      "name": "文档编写",
+      "description": "面向撰写文档的配置",
       "config": {
         "general": {
           "model": "claude-sonnet-4-5",

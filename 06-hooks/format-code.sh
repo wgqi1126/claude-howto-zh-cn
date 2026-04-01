@@ -1,43 +1,43 @@
 #!/bin/bash
-# Auto-format code before writing
+# 在写入前自动格式化代码
 # Hook: PreToolUse:Write
 
 FILE=$1
 
 if [ -z "$FILE" ]; then
-  echo "Usage: $0 <file_path>"
+  echo "用法: $0 <file_path>"
   exit 1
 fi
 
-# Detect file type and format accordingly
+# 按扩展名检测文件类型并调用对应格式化工具
 case "$FILE" in
   *.js|*.jsx|*.ts|*.tsx)
     if command -v prettier &> /dev/null; then
-      echo "Formatting JavaScript/TypeScript file: $FILE"
+      echo "正在格式化 JavaScript/TypeScript 文件: $FILE"
       prettier --write "$FILE"
     fi
     ;;
   *.py)
     if command -v black &> /dev/null; then
-      echo "Formatting Python file: $FILE"
+      echo "正在格式化 Python 文件: $FILE"
       black "$FILE"
     fi
     ;;
   *.go)
     if command -v gofmt &> /dev/null; then
-      echo "Formatting Go file: $FILE"
+      echo "正在格式化 Go 文件: $FILE"
       gofmt -w "$FILE"
     fi
     ;;
   *.rs)
     if command -v rustfmt &> /dev/null; then
-      echo "Formatting Rust file: $FILE"
+      echo "正在格式化 Rust 文件: $FILE"
       rustfmt "$FILE"
     fi
     ;;
   *.java)
     if command -v google-java-format &> /dev/null; then
-      echo "Formatting Java file: $FILE"
+      echo "正在格式化 Java 文件: $FILE"
       google-java-format -i "$FILE"
     fi
     ;;

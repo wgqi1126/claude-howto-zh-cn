@@ -1,113 +1,113 @@
-# Code Review Finding Template
+# Code Review 问题记录模板
 
-Use this template when documenting each issue found during code review.
+在代码审查中记录每个问题时请使用本模板。
 
 ---
 
-## Issue: [TITLE]
+## 问题：[标题]
 
-### Severity
-- [ ] Critical (blocks deployment)
-- [ ] High (should fix before merge)
-- [ ] Medium (should fix soon)
-- [ ] Low (nice to have)
+### 严重程度
+- [ ] Critical（阻塞发布）
+- [ ] High（合并前应修复）
+- [ ] Medium（应尽快修复）
+- [ ] Low（锦上添花）
 
-### Category
-- [ ] Security
-- [ ] Performance
-- [ ] Code Quality
-- [ ] Maintainability
-- [ ] Testing
-- [ ] Design Pattern
-- [ ] Documentation
+### 类别
+- [ ] 安全（Security）
+- [ ] 性能（Performance）
+- [ ] 代码质量（Code Quality）
+- [ ] 可维护性（Maintainability）
+- [ ] 测试（Testing）
+- [ ] 设计模式（Design Pattern）
+- [ ] 文档（Documentation）
 
-### Location
-**File:** `src/components/UserCard.tsx`
+### 位置
+**文件：** `src/components/UserCard.tsx`
 
-**Lines:** 45-52
+**行号：** 45-52
 
-**Function/Method:** `renderUserDetails()`
+**函数/方法：** `renderUserDetails()`
 
-### Issue Description
+### 问题说明
 
-**What:** Describe what the issue is.
+**是什么：** 说明问题具体是什么。
 
-**Why it matters:** Explain the impact and why this needs to be fixed.
+**为何重要：** 说明影响以及为何需要修复。
 
-**Current behavior:** Show the problematic code or behavior.
+**当前行为：** 展示有问题的代码或行为。
 
-**Expected behavior:** Describe what should happen instead.
+**预期行为：** 说明应当如何表现。
 
-### Code Example
+### 代码示例
 
-#### Current (Problematic)
+#### 当前（有问题）
 
 ```typescript
-// Shows the N+1 query problem
+// 展示 N+1 查询问题
 const users = fetchUsers();
 users.forEach(user => {
-  const posts = fetchUserPosts(user.id); // Query per user!
+  const posts = fetchUserPosts(user.id); // 每个用户一次查询！
   renderUserPosts(posts);
 });
 ```
 
-#### Suggested Fix
+#### 建议修复
 
 ```typescript
-// Optimized with JOIN query
+// 使用 JOIN 查询优化
 const usersWithPosts = fetchUsersWithPosts();
 usersWithPosts.forEach(({ user, posts }) => {
   renderUserPosts(posts);
 });
 ```
 
-### Impact Analysis
+### 影响分析
 
-| Aspect | Impact | Severity |
+| 方面 | 影响 | 严重程度 |
 |--------|--------|----------|
-| Performance | 100+ queries for 20 users | High |
-| User Experience | Slow page load | High |
-| Scalability | Breaks at scale | Critical |
-| Maintainability | Hard to debug | Medium |
+| 性能 | 20 个用户触发 100+ 次查询 | High |
+| 用户体验 | 页面加载缓慢 | High |
+| 可扩展性 | 规模一大就会出问题 | Critical |
+| 可维护性 | 难以调试 | Medium |
 
-### Related Issues
+### 相关问题
 
-- Similar issue in `AdminUserList.tsx` line 120
-- Related PR: #456
-- Related issue: #789
+- 类似问题：`AdminUserList.tsx` 第 120 行
+- 相关 PR：#456
+- 相关 issue：#789
 
-### Additional Resources
+### 延伸阅读
 
 - [N+1 Query Problem](https://en.wikipedia.org/wiki/N%2B1_problem)
 - [Database Join Documentation](https://docs.example.com/joins)
 - [Performance Optimization Guide](./docs/performance.md)
 
-### Reviewer Notes
+### 审查者备注
 
-- This is a common pattern in this codebase
-- Consider adding this to the code style guide
-- Might be worth creating a helper function
+- 在本代码库中这是常见写法
+- 可考虑写入代码风格指南
+- 或许值得抽一个辅助函数
 
-### Author Response (for feedback)
+### 作者反馈（供回复填写）
 
-*To be filled by the code author:*
+*由代码作者填写：*
 
-- [ ] Fix implemented in commit: `abc123`
-- [ ] Fix status: Complete / In Progress / Needs Discussion
-- [ ] Questions or concerns: (describe)
+- [ ] 修复已提交于 commit：`abc123`
+- [ ] 修复状态：已完成 / 进行中 / 需讨论
+- [ ] 疑问或顾虑：（说明）
 
 ---
 
-## Finding Statistics (for Reviewer)
+## 问题统计（供审查者使用）
 
-When reviewing multiple findings, track:
+审查多条问题时请记录：
 
-- **Total Issues Found:** X
-- **Critical:** X
-- **High:** X
-- **Medium:** X
-- **Low:** X
+- **发现问题总数：** X
+- **Critical：** X
+- **High：** X
+- **Medium：** X
+- **Low：** X
 
-**Recommendation:** ✅ Approve / ⚠️ Request Changes / 🔄 Needs Discussion
+**建议：** ✅ 通过 / ⚠️ 请求修改 / 🔄 需讨论
 
-**Overall Code Quality:** 1-5 stars
+**整体代码质量：** 1–5 星

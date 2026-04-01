@@ -1,61 +1,67 @@
-# API Module Standards
+# API 模块规范
 
-This file overrides root CLAUDE.md for everything in /src/api/
+本文件覆盖 `/src/api/` 目录下内容相对根目录 `CLAUDE.md` 的约定。
 
-## API-Specific Standards
+## API 专用规范
 
-### Request Validation
-- Use Zod for schema validation
-- Always validate input
-- Return 400 with validation errors
-- Include field-level error details
+### 请求校验
 
-### Authentication
-- All endpoints require JWT token
-- Token in Authorization header
-- Token expires after 24 hours
-- Implement refresh token mechanism
+- 使用 Zod 进行 schema 校验
+- 始终校验输入
+- 校验失败时返回 400
+- 包含字段级错误详情
 
-### Response Format
+### 认证
 
-All responses must follow this structure:
+- 所有端点需要 JWT token
+- Token 放在 `Authorization` 请求头中
+- Token 在 24 小时后过期
+- 实现 refresh token 机制
+
+### 响应格式
+
+所有响应必须遵循以下结构：
 
 ```json
 {
   "success": true,
-  "data": { /* actual data */ },
+  "data": { /* 实际数据 */ },
   "timestamp": "2025-11-06T10:30:00Z",
   "version": "1.0"
 }
 ```
 
-Error responses:
+错误响应：
+
 ```json
 {
   "success": false,
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "User message",
-    "details": { /* field errors */ }
+    "message": "面向用户的错误说明",
+    "details": { /* 字段错误 */ }
   },
   "timestamp": "2025-11-06T10:30:00Z"
 }
 ```
 
-### Pagination
-- Use cursor-based pagination (not offset)
-- Include `hasMore` boolean
-- Limit max page size to 100
-- Default page size: 20
+### 分页
 
-### Rate Limiting
-- 1000 requests per hour for authenticated users
-- 100 requests per hour for public endpoints
-- Return 429 when exceeded
-- Include retry-after header
+- 使用基于游标的分页（不使用 offset）
+- 包含布尔字段 `hasMore`
+- 单页最大条数限制为 100
+- 默认每页 20 条
 
-### Caching
-- Use Redis for session caching
-- Cache duration: 5 minutes default
-- Invalidate on write operations
-- Tag cache keys with resource type
+### 限流
+
+- 已认证用户每小时 1000 次请求
+- 公开端点每小时 100 次请求
+- 超限时返回 429
+- 包含 `Retry-After` 响应头
+
+### 缓存
+
+- 使用 Redis 做会话缓存
+- 默认缓存时长 5 分钟
+- 写操作后使缓存失效
+- 在缓存键上按资源类型打标签

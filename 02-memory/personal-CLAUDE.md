@@ -1,45 +1,45 @@
-# My Development Preferences
+# 我的开发偏好
 
-## About Me
-- **Experience Level**: 8 years full-stack development
-- **Preferred Languages**: TypeScript, Python
-- **Communication Style**: Direct, with examples
-- **Learning Style**: Visual diagrams with code
+## 关于我
+- **经验水平**：8 年全栈开发
+- **常用语言**：TypeScript、Python
+- **沟通风格**：直接，配合示例
+- **学习方式**：可视化图示 + 代码
 
-## Code Preferences
+## 代码偏好
 
-### Error Handling
-I prefer explicit error handling with try-catch blocks and meaningful error messages.
-Avoid generic errors. Always log errors for debugging.
+### 错误处理
+偏好显式错误处理：使用 `try-catch`，并写出有意义的错误信息。
+避免笼统的错误提示。调试时务必记录错误日志。
 
-### Comments
-Use comments for WHY, not WHAT. Code should be self-documenting.
-Comments should explain business logic or non-obvious decisions.
+### 注释
+注释说明「为什么」，而不是「做了什么」。代码本身应能自解释。
+注释应说明业务逻辑或非显而易见的设计决策。
 
-### Testing
-I prefer TDD (test-driven development).
-Write tests first, then implementation.
-Focus on behavior, not implementation details.
+### 测试
+偏好 TDD（测试驱动开发）。
+先写测试，再写实现。
+关注行为，而非实现细节。
 
-### Architecture
-I prefer modular, loosely-coupled design.
-Use dependency injection for testability.
-Separate concerns (Controllers, Services, Repositories).
+### 架构
+偏好模块化、松耦合设计。
+使用依赖注入以便测试。
+职责分离（Controllers、Services、Repositories）。
 
-## Debugging Preferences
-- Use console.log with prefix: `[DEBUG]`
-- Include context: function name, relevant variables
-- Use stack traces when available
-- Always include timestamps in logs
+## 调试偏好
+- 使用带前缀的 `console.log`：`[DEBUG]`
+- 附带上下文：函数名、相关变量
+- 在可用时使用堆栈跟踪
+- 日志中始终包含时间戳
 
-## Communication
-- Explain complex concepts with diagrams
-- Show concrete examples before explaining theory
-- Include before/after code snippets
-- Summarize key points at the end
+## 沟通方式
+- 用图示解释复杂概念
+- 先给具体示例，再讲理论
+- 提供修改前后的代码片段
+- 结尾总结要点
 
-## Project Organization
-I organize my projects as:
+## 项目组织
+我的项目通常这样组织：
 ```
 project/
   ├── src/
@@ -52,9 +52,9 @@ project/
   └── docker/
 ```
 
-## Tooling
-- **IDE**: VS Code with vim keybindings
-- **Terminal**: Zsh with Oh-My-Zsh
-- **Format**: Prettier (100 char line length)
-- **Linter**: ESLint with airbnb config
-- **Test Framework**: Jest with React Testing Library
+## 工具链
+- **IDE**：VS Code，vim 键位
+- **终端**：Zsh + Oh-My-Zsh
+- **格式化**：Prettier（行宽 100 字符）
+- **Lint**：ESLint，airbnb 配置
+- **测试框架**：Jest + React Testing Library

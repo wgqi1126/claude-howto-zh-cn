@@ -2,12 +2,11 @@
 """
 setup-auto-mode-permissions.py
 
-Seed ~/.claude/settings.json with a conservative baseline of safe permissions
-for Claude Code. The default set is read-only and local-inspection oriented;
-optional flags let you widen the allowlist for editing, test execution, git
-write operations, package installs, and GitHub CLI writes.
+向 ~/.claude/settings.json 写入一组保守、安全的 Claude Code 权限基线。
+默认集合为只读且面向本地查看；可选参数可扩大允许列表，以包含编辑、测试执行、
+git 写入、包安装以及 GitHub CLI 写入。
 
-Usage:
+用法:
     python3 setup-auto-mode-permissions.py
     python3 setup-auto-mode-permissions.py --dry-run
     python3 setup-auto-mode-permissions.py --include-edits --include-tests
@@ -23,7 +22,7 @@ from typing import Iterable
 
 SETTINGS_PATH = Path.home() / ".claude" / "settings.json"
 
-# Core baseline: read-only inspection and low-risk local shell commands.
+# 核心基线：只读检查与低风险本地 shell 命令。
 CORE_PERMISSIONS = [
     "Read(*)",
     "Glob(*)",
@@ -65,7 +64,7 @@ CORE_PERMISSIONS = [
     "Bash(git stash list:*)",
 ]
 
-# Optional but still local: file edits and task bookkeeping.
+# 可选但仍属本地：文件编辑与任务记录。
 EDITING_PERMISSIONS = [
     "Edit(*)",
     "Write(*)",
@@ -74,8 +73,8 @@ EDITING_PERMISSIONS = [
     "TaskUpdate(*)",
 ]
 
-# Optional dev/test commands. These can still execute arbitrary project scripts,
-# so keep them opt-in rather than part of the default baseline.
+# 可选的开发/测试命令。仍可能执行任意项目脚本，
+# 故保持为可选加入，而非默认基线的一部分。
 TEST_AND_BUILD_PERMISSIONS = [
     "Bash(npm test:*)",
     "Bash(cargo test:*)",
@@ -86,8 +85,7 @@ TEST_AND_BUILD_PERMISSIONS = [
     "Bash(cmake:*)",
 ]
 
-# Optional local git write operations. History-rewriting commands stay out of
-# the default baseline because they are easy to misuse.
+# 可选的本地 git 写入操作。改写历史的命令不纳入默认基线，因易被误用。
 GIT_WRITE_PERMISSIONS = [
     "Bash(git add:*)",
     "Bash(git commit:*)",
@@ -97,8 +95,7 @@ GIT_WRITE_PERMISSIONS = [
     "Bash(git tag:*)",
 ]
 
-# Optional dependency/package commands. These are intentionally excluded from
-# the default baseline because they can execute project hooks or fetch code.
+# 可选的依赖/包管理命令。有意不纳入默认基线，因其可能执行项目 hooks 或拉取代码。
 PACKAGE_MANAGER_PERMISSIONS = [
     "Bash(npm ci:*)",
     "Bash(npm install:*)",
@@ -106,12 +103,12 @@ PACKAGE_MANAGER_PERMISSIONS = [
     "Bash(pip3 install:*)",
 ]
 
-# Optional GitHub CLI write access.
+# 可选的 GitHub CLI 写入权限。
 GITHUB_WRITE_PERMISSIONS = [
     "Bash(gh pr create:*)",
 ]
 
-# Optional extra GitHub CLI read access.
+# 可选的额外 GitHub CLI 读取权限。
 GITHUB_READ_PERMISSIONS = [
     "Bash(gh pr view:*)",
     "Bash(gh pr list:*)",
@@ -123,42 +120,42 @@ GITHUB_READ_PERMISSIONS = [
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Seed Claude Code settings with a conservative permission baseline."
+        description="向 Claude Code 设置写入保守的权限基线。"
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Preview the rules that would be added without writing settings.json",
+        help="预览将要添加的规则，不写入 settings.json",
     )
     parser.add_argument(
         "--include-edits",
         action="store_true",
-        help="Add file-editing permissions (Edit/Write/NotebookEdit/TaskCreate/TaskUpdate)",
+        help="添加文件编辑相关权限（Edit/Write/NotebookEdit/TaskCreate/TaskUpdate）",
     )
     parser.add_argument(
         "--include-tests",
         action="store_true",
-        help="Add local build/test commands such as pytest, cargo test, and make",
+        help="添加本地构建/测试命令，如 pytest、cargo test、make",
     )
     parser.add_argument(
         "--include-git-write",
         action="store_true",
-        help="Add local git mutation commands such as add, commit, checkout, and stash",
+        help="添加本地 git 变更类命令，如 add、commit、checkout、stash",
     )
     parser.add_argument(
         "--include-packages",
         action="store_true",
-        help="Add package install commands such as npm ci, npm install, and pip install",
+        help="添加包安装命令，如 npm ci、npm install、pip install",
     )
     parser.add_argument(
         "--include-gh-write",
         action="store_true",
-        help="Add GitHub CLI write permissions such as gh pr create",
+        help="添加 GitHub CLI 写入权限，如 gh pr create",
     )
     parser.add_argument(
         "--include-gh-read",
         action="store_true",
-        help="Add GitHub CLI read permissions such as gh pr view and gh repo view",
+        help="添加 GitHub CLI 读取权限，如 gh pr view、gh repo view",
     )
     return parser.parse_args()
 
@@ -171,10 +168,10 @@ def load_settings(path: Path) -> dict:
         with path.open() as f:
             settings = json.load(f)
     except json.JSONDecodeError as exc:
-        raise SystemExit(f"Invalid JSON in {path}: {exc}") from exc
+        raise SystemExit(f"{path} 中的 JSON 无效：{exc}") from exc
 
     if not isinstance(settings, dict):
-        raise SystemExit(f"Expected {path} to contain a JSON object.")
+        raise SystemExit(f"期望 {path} 为 JSON 对象。")
 
     return settings
 
@@ -237,28 +234,28 @@ def main() -> None:
     permissions = settings.setdefault("permissions", {})
 
     if not isinstance(permissions, dict):
-        raise SystemExit("Expected permissions to be a JSON object.")
+        raise SystemExit("期望 permissions 为 JSON 对象。")
 
     allow = permissions.setdefault("allow", [])
     if not isinstance(allow, list):
-        raise SystemExit("Expected permissions.allow to be a JSON array.")
+        raise SystemExit("期望 permissions.allow 为 JSON 数组。")
 
     added = append_unique(allow, permissions_to_add)
 
     if not added:
-        print("Nothing to add — all selected rules already present.")
+        print("无需添加 — 所选规则均已存在。")
         return
 
-    print(f"{'Would add' if args.dry_run else 'Adding'} {len(added)} rule(s):")
+    print(f"{'将添加' if args.dry_run else '正在添加'} {len(added)} 条规则：")
     for rule in added:
         print(f"  + {rule}")
 
     if args.dry_run:
-        print("\nDry run — no changes written.")
+        print("\n试运行 — 未写入任何更改。")
         return
 
     atomic_write_json(SETTINGS_PATH, settings)
-    print(f"\nDone. {len(added)} rule(s) added to {SETTINGS_PATH}")
+    print(f"\n完成。已将 {len(added)} 条规则添加到 {SETTINGS_PATH}")
 
 
 if __name__ == "__main__":

@@ -1,13 +1,13 @@
 ---
 name: performance-analyzer
-description: Performance impact analysis
+description: 性能影响分析
 tools: read, grep, bash
 ---
 
-# Performance Analyzer
+# 性能分析器
 
-Evaluates performance impact of changes:
-- Algorithm complexity
-- Database query efficiency
-- Memory usage
-- Caching opportunities
+评估变更对性能的影响：
+- 算法复杂度
+- 数据库查询效率
+- 内存使用
+- 可缓存点

@@ -1,47 +1,47 @@
-# Code Review Checklist
+# 代码审查清单
 
-## Security Checklist
-- [ ] No hardcoded credentials or secrets
-- [ ] Input validation on all user inputs
-- [ ] SQL injection prevention (parameterized queries)
-- [ ] CSRF protection on state-changing operations
-- [ ] XSS prevention with proper escaping
-- [ ] Authentication checks on protected endpoints
-- [ ] Authorization checks on resources
-- [ ] Secure password hashing (bcrypt, argon2)
-- [ ] No sensitive data in logs
-- [ ] HTTPS enforced
+## 安全审查清单
+- [ ] 无硬编码凭据或密钥
+- [ ] 对所有用户输入进行校验
+- [ ] 防范 SQL 注入（参数化查询）
+- [ ] 对会改变状态的操作提供 CSRF 防护
+- [ ] 通过正确转义防范 XSS
+- [ ] 受保护端点已做身份认证检查
+- [ ] 资源已做授权检查
+- [ ] 安全的密码哈希（bcrypt、argon2）
+- [ ] 日志中无敏感数据
+- [ ] 强制使用 HTTPS
 
-## Performance Checklist
-- [ ] No N+1 queries
-- [ ] Appropriate use of indexes
-- [ ] Caching implemented where beneficial
-- [ ] No blocking operations on main thread
-- [ ] Async/await used correctly
-- [ ] Large datasets paginated
-- [ ] Database connections pooled
-- [ ] Regular expressions optimized
-- [ ] No unnecessary object creation
-- [ ] Memory leaks prevented
+## 性能审查清单
+- [ ] 无 N+1 查询
+- [ ] 索引使用得当
+- [ ] 在有益处已实施缓存
+- [ ] 主线程无阻塞操作
+- [ ] async/await 使用正确
+- [ ] 大数据集已分页
+- [ ] 数据库连接已池化
+- [ ] 正则表达式已优化
+- [ ] 无不必要的对象创建
+- [ ] 已防止内存泄漏
 
-## Quality Checklist
-- [ ] Functions < 50 lines
-- [ ] Clear variable naming
-- [ ] No duplicate code
-- [ ] Proper error handling
-- [ ] Comments explain WHY, not WHAT
-- [ ] No console.logs in production
-- [ ] Type checking (TypeScript/JSDoc)
-- [ ] SOLID principles followed
-- [ ] Design patterns applied correctly
-- [ ] Self-documenting code
+## 质量审查清单
+- [ ] 函数少于 50 行
+- [ ] 变量命名清晰
+- [ ] 无重复代码
+- [ ] 错误处理得当
+- [ ] 注释说明「为什么」，而非「做什么」
+- [ ] 生产环境无 console.log
+- [ ] 类型检查（TypeScript/JSDoc）
+- [ ] 遵循 SOLID 原则
+- [ ] 设计模式应用正确
+- [ ] 代码自解释
 
-## Testing Checklist
-- [ ] Unit tests written
-- [ ] Edge cases covered
-- [ ] Error scenarios tested
-- [ ] Integration tests present
-- [ ] Coverage > 80%
-- [ ] No flaky tests
-- [ ] Mock external dependencies
-- [ ] Clear test names
+## 测试审查清单
+- [ ] 已编写单元测试
+- [ ] 已覆盖边界情况
+- [ ] 已测试错误场景
+- [ ] 已有集成测试
+- [ ] 覆盖率 > 80%
+- [ ] 无不稳定测试
+- [ ] 对外部依赖进行 Mock
+- [ ] 测试名称清晰

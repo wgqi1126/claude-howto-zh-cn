@@ -1,37 +1,37 @@
 #!/usr/bin/env node
 
 /**
- * Pre-review hook
- * Runs before starting PR review to ensure prerequisites are met
+ * Pre-review 钩子
+ * 在开始 PR 审查前运行，确保前置条件已满足
  */
 
 async function preReview() {
-  console.log('Running pre-review checks...');
+  console.log('正在运行 pre-review 检查...');
 
-  // Check if git repository
+  // 检查是否为 git 仓库
   const { execSync } = require('child_process');
   try {
     execSync('git rev-parse --git-dir', { stdio: 'pipe' });
   } catch (error) {
-    console.error('❌ Not a git repository');
+    console.error('❌ 当前目录不是 git 仓库');
     process.exit(1);
   }
 
-  // Check for uncommitted changes
+  // 检查是否有未提交的更改
   try {
     const status = execSync('git status --porcelain', { encoding: 'utf-8' });
     if (status.trim()) {
-      console.warn('⚠️  Warning: Uncommitted changes detected');
+      console.warn('⚠️  警告：检测到未提交的更改');
     }
   } catch (error) {
-    console.error('❌ Failed to check git status');
+    console.error('❌ 检查 git 状态失败');
     process.exit(1);
   }
 
-  console.log('✅ Pre-review checks passed');
+  console.log('✅ Pre-review 检查已通过');
 }
 
 preReview().catch(error => {
-  console.error('Pre-review hook failed:', error);
+  console.error('Pre-review 钩子执行失败:', error);
   process.exit(1);
 });

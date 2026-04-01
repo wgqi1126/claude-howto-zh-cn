@@ -1,13 +1,13 @@
 #!/bin/bash
-# Validate user prompts
+# 校验用户提示词
 # Hook: UserPromptSubmit
 
-# Read prompt from stdin
+# 从标准输入读取提示词
 PROMPT=$(cat)
 
-echo "🔍 Validating prompt..."
+echo "🔍 正在校验提示词..."
 
-# Check for dangerous operations
+# 检查危险操作
 DANGEROUS_PATTERNS=(
   "rm -rf /"
   "delete database"
@@ -18,26 +18,26 @@ DANGEROUS_PATTERNS=(
 
 for pattern in "${DANGEROUS_PATTERNS[@]}"; do
   if echo "$PROMPT" | grep -qi "$pattern"; then
-    echo "❌ Blocked: Dangerous operation detected: $pattern"
+    echo "❌ 已拦截：检测到危险操作：$pattern"
     exit 1
   fi
 done
 
-# Check for production deployments
+# 检查生产环境部署
 if echo "$PROMPT" | grep -qiE "(deploy|push).*production"; then
   if [ ! -f ".deployment-approved" ]; then
-    echo "❌ Blocked: Production deployment requires approval"
-    echo "Create .deployment-approved file to proceed"
+    echo "❌ 已拦截：生产环境部署需要审批"
+    echo "请创建 .deployment-approved 文件后再继续"
     exit 1
   fi
 fi
 
-# Check for required context in certain operations
+# 检查特定操作是否具备所需上下文
 if echo "$PROMPT" | grep -qi "refactor"; then
   if [ ! -f "tests/" ] && [ ! -f "test/" ]; then
-    echo "⚠️  Warning: Refactoring without tests may be risky"
+    echo "⚠️  警告：在没有测试的情况下重构可能存在风险"
   fi
 fi
 
-echo "✅ Prompt validation passed"
+echo "✅ 提示词校验通过"
 exit 0

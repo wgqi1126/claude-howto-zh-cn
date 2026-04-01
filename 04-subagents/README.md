@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="../resources/logos/claude-howto-logo-dark.svg">
-  <img alt="Claude How To" src="../resources/logos/claude-howto-logo.svg">
+  <img alt="Claude How To 教程" src="../resources/logos/claude-howto-logo.svg">
 </picture>
 
 # Subagents 完整参考指南
@@ -103,7 +103,7 @@ memory: user  # 可选 - 持久化 memory 范围（user、project、local）
 background: false  # 可选 - 作为后台任务运行
 effort: high  # 可选 - 推理强度（low、medium、high、max）
 isolation: worktree  # 可选 - git worktree 隔离
-initialPrompt: "Start by analyzing the codebase"  # 可选 - 自动提交的首轮输入
+initialPrompt: "先分析代码库"  # 可选 - 自动提交的首轮输入
 hooks:  # 可选 - 组件级 hooks
   PreToolUse:
     - matcher: "Bash"
@@ -171,8 +171,8 @@ tools: Read, Bash(npm:*), Bash(test:*)
 ```bash
 claude --agents '{
   "code-reviewer": {
-    "description": "Expert code reviewer. Use proactively after code changes.",
-    "prompt": "You are a senior code reviewer. Focus on code quality, security, and best practices.",
+    "description": "代码审查专家。在代码变更后主动使用。",
+    "prompt": "你是一名资深代码审查员。重点关注代码质量、安全与最佳实践。",
     "tools": ["Read", "Grep", "Glob", "Bash"],
     "model": "sonnet"
   }
@@ -184,10 +184,10 @@ claude --agents '{
 ```json
 {
   "agent-name": {
-    "description": "Required: when to invoke this agent",
-    "prompt": "Required: system prompt for the agent",
-    "tools": ["Optional", "array", "of", "tools"],
-    "model": "optional: sonnet|opus|haiku"
+    "description": "必填：何时调用该智能体",
+    "prompt": "必填：智能体的系统提示",
+    "tools": ["可选", "工具", "数组"],
+    "model": "可选：sonnet|opus|haiku"
   }
 }
 ```
@@ -310,12 +310,11 @@ mkdir -p .claude/agents
 cat > .claude/agents/test-runner.md << 'EOF'
 ---
 name: test-runner
-description: Use proactively to run tests and fix failures
+description: 主动用于运行测试并修复失败
 ---
 
-You are a test automation expert. When you see code changes, proactively
-run the appropriate tests. If tests fail, analyze the failures and fix
-them while preserving the original test intent.
+你是一名测试自动化专家。当看到代码变更时，主动运行相应测试。
+若测试失败，分析失败原因并在保留原测试意图的前提下进行修复。
 EOF
 
 # 创建用户 Subagent（在所有项目中可用）
@@ -348,9 +347,9 @@ description: Expert code review specialist. Use PROACTIVELY after writing or mod
 可明确要求使用某个 Subagent：
 
 ```
-> Use the test-runner subagent to fix failing tests
-> Have the code-reviewer subagent look at my recent changes
-> Ask the debugger subagent to investigate this error
+> 使用 test-runner Subagent 修复失败的测试
+> 让 code-reviewer Subagent 查看我最近的改动
+> 请 debugger Subagent 排查此错误
 ```
 
 ### @ 提及调用
@@ -358,7 +357,7 @@ description: Expert code review specialist. Use PROACTIVELY after writing or mod
 使用 `@` 前缀可确保调用指定 Subagent（绕过自动委派启发式）：
 
 ```
-> @"code-reviewer (agent)" review the auth module
+> @"code-reviewer (agent)" 审查认证模块
 ```
 
 ### 会话级主智能体
@@ -392,11 +391,11 @@ Subagents 可在保留完整上下文的情况下继续之前的对话：
 
 ```bash
 # 首次调用
-> Use the code-analyzer agent to start reviewing the authentication module
+> 使用 code-analyzer 智能体开始审查认证模块
 # 返回 agentId: "abc123"
 
 # 稍后恢复该智能体
-> Resume agent abc123 and now analyze the authorization logic as well
+> Resume agent abc123 并同时分析授权逻辑
 ```
 
 **适用场景**：

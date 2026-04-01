@@ -1,10 +1,13 @@
-# Planning Mode Examples
+<a id="planning-mode-examples"></a>
+# 规划模式示例
 
-Real-world examples demonstrating effective use of planning mode in Claude Code.
+展示在 Claude Code 中有效使用规划模式的实际示例。
 
-## Example 1: Building a REST API
+<a id="example-1-building-a-rest-api"></a>
+## 示例 1：构建 REST API
 
-### Without Planning Mode
+<a id="without-planning-mode"></a>
+### 未使用规划模式
 
 ```
 User: Build a REST API for a blog
@@ -13,7 +16,8 @@ Claude: I'll create the API...
 [Starts coding immediately, may miss requirements]
 ```
 
-### With Planning Mode
+<a id="with-planning-mode"></a>
+### 使用规划模式
 
 ```
 User: /plan Build a REST API for a blog
@@ -95,9 +99,10 @@ Claude: Starting Phase 1: Project Setup...
 [Implements each phase systematically]
 ```
 
-## Example 2: Database Migration
+<a id="example-2-database-migration"></a>
+## 示例 2：数据库迁移
 
-### With Planning Mode
+### 使用规划模式
 
 ```
 User: /plan Migrate from MongoDB to PostgreSQL
@@ -181,7 +186,8 @@ User: Modify - let's add a rollback plan for each phase
 Claude: Updated plan with rollback procedures for each phase...
 ```
 
-## Example 3: Frontend Refactoring
+<a id="example-3-frontend-refactoring"></a>
+## 示例 3：前端重构
 
 ```
 User: /plan Refactor our React app from class components to hooks
@@ -275,7 +281,8 @@ Claude: I'll create a systematic refactoring plan.
 Proceed? (yes/no/modify)
 ```
 
-## Example 4: Security Implementation
+<a id="example-4-security-implementation"></a>
+## 示例 4：安全实现
 
 ```
 User: /plan Implement comprehensive security for our web app
@@ -380,7 +387,8 @@ Claude: Let me create a thorough security implementation plan.
 Proceed? (yes/no/modify)
 ```
 
-## Example 5: Performance Optimization
+<a id="example-5-performance-optimization"></a>
+## 示例 5：性能优化
 
 ```
 User: /plan Optimize our slow e-commerce website
@@ -496,38 +504,42 @@ Claude: Let me create a comprehensive performance optimization plan.
 Proceed with this plan? (yes/no/modify)
 ```
 
-## Key Takeaways
+<a id="key-takeaways"></a>
+## 要点总结
 
-### Benefits of Planning Mode
+<a id="benefits-of-planning-mode"></a>
+### 规划模式的好处
 
-1. **Clarity**: Clear roadmap before starting
-2. **Estimation**: Time and effort estimates
-3. **Risk Assessment**: Identify potential issues early
-4. **Prioritization**: Logical order of tasks
-5. **Approval**: Review and approve before execution
-6. **Modification**: Adjust plan based on feedback
+1. **清晰**：动手前有明确路线图
+2. **估算**：时间与工作量预估
+3. **风险评估**：尽早发现潜在问题
+4. **优先级**：任务顺序合理
+5. **确认**：执行前先审阅并批准
+6. **可调整**：根据反馈修改计划
 
-### When to Use Planning Mode
+<a id="when-to-use-planning-mode"></a>
+### 何时使用规划模式
 
-✅ **Always use for**:
-- Multi-day projects
-- Team collaborations
-- Critical system changes
-- Learning new concepts
-- Complex refactoring
+✅ **适合使用**：
+- 跨多日的项目
+- 团队协作
+- 关键系统变更
+- 学习新概念
+- 复杂重构
 
-❌ **Don't use for**:
-- Bug fixes
-- Small tweaks
-- Simple queries
-- Quick experiments
+❌ **不必使用**：
+- 修 bug
+- 小改动
+- 简单问答
+- 快速试验
 
-### Best Practices
+<a id="best-practices"></a>
+### 最佳实践
 
-1. **Review plans carefully** before approving
-2. **Modify plans** when you spot issues
-3. **Break down** complex tasks
-4. **Estimate realistic** timeframes
-5. **Include rollback** strategies
-6. **Add success** criteria
-7. **Plan for testing** at each phase
+1. 批准前**仔细审阅**计划
+2. 发现问题时**修改计划**
+3. **拆分**复杂任务
+4. **估算**切合实际的时间
+5. **纳入回滚**策略
+6. **写明成功**标准
+7. **每个阶段都规划测试**

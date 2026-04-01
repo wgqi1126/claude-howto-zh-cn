@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="../resources/logos/claude-howto-logo-dark.svg">
-  <img alt="Claude How To" src="../resources/logos/claude-howto-logo.svg">
+  <img alt="Claude How To 指南" src="../resources/logos/claude-howto-logo.svg">
 </picture>
 
 <a id="slash-commands"></a>
@@ -26,7 +26,7 @@ Slash commands 是在交互式会话中用来控制 Claude 行为的快捷方式
 
 内置命令是常用操作的快捷方式。共有 **55+ 条内置命令** 和 **5 个打包 Skills**。在 Claude Code 中输入 `/` 可查看完整列表，或输入 `/` 后接任意字母进行筛选。
 
-| Command | 用途 |
+| 命令 | 用途 |
 |---------|------|
 | `/add-dir <path>` | 添加工作目录 |
 | `/agents` | 管理 agent 配置 |
@@ -108,7 +108,7 @@ Slash commands 是在交互式会话中用来控制 Claude 行为的快捷方式
 
 ### 已弃用命令
 
-| Command | 状态 |
+| 命令 | 状态 |
 |---------|------|
 | `/review` | 已弃用 — 由 `code-review` 插件替代 |
 | `/output-style` | 自 v2.1.73 起弃用 |
@@ -148,12 +148,12 @@ Slash commands 是在交互式会话中用来控制 Claude 行为的快捷方式
 
 你现有的 `.claude/commands/` 文件无需修改即可继续使用。若要迁移到 Skills：
 
-**之前（Command）：**
+**之前（旧版 Commands）：**
 ```
 .claude/commands/optimize.md
 ```
 
-**之后（Skill）：**
+**之后（Skills）：**
 ```
 .claude/skills/optimize/SKILL.md
 ```
@@ -188,7 +188,7 @@ name: my-command
 description: 该命令的作用及适用场景
 ---
 
-# My Command
+# 我的命令
 
 在该命令被调用时，请 Claude 遵循以下说明。
 
@@ -259,7 +259,7 @@ description: 结合上下文创建 git commit
 allowed-tools: Bash(git *)
 ---
 
-## Context
+## 上下文
 
 - 当前 git 状态：!`git status`
 - 当前 git diff：!`git diff HEAD`
@@ -314,7 +314,7 @@ MCP 服务器可将 prompts 暴露为 slash command：
 ```bash
 /mcp__github__list_prs
 /mcp__github__pr_review 456
-/mcp__jira__create_issue "Bug title" high
+/mcp__jira__create_issue "缺陷标题" high
 ```
 
 <a id="mcp-permission-syntax"></a>
@@ -334,12 +334,12 @@ MCP 服务器可将 prompts 暴露为 slash command：
 ```mermaid
 graph TD
     A["用户输入：/command-name"] --> B{"命令类型？"}
-    B -->|Built-in| C["执行内置命令"]
+    B -->|内置| C["执行内置命令"]
     B -->|Skill| D["加载 SKILL.md"]
     B -->|Plugin| E["加载 Plugin 命令"]
     B -->|MCP| F["执行 MCP Prompt"]
 
-    D --> G["解析 Frontmatter"]
+    D --> G["解析 frontmatter"]
     G --> H["替换变量"]
     H --> I["执行 Shell 命令"]
     I --> J["发送给 Claude"]
@@ -352,9 +352,9 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant User
+    participant User as 用户
     participant Claude as Claude Code
-    participant FS as File System
+    participant FS as 文件系统
     participant CLI as Shell/Bash
 
     User->>Claude: 输入 /optimize
@@ -411,7 +411,7 @@ sequenceDiagram
 
 **用法：**
 ```
-/commit [optional message]
+/commit [可选说明]
 ```
 
 ### 5. `/push-all` — 暂存、提交并推送
@@ -507,24 +507,24 @@ cp 01-slash-commands/*.md ~/.claude/commands/
 ---
 name: my-command
 description: 该命令的作用。在 [触发条件] 时使用。
-argument-hint: [optional-args]
+argument-hint: [可选参数]
 allowed-tools: Bash(npm *), Read, Grep
 ---
 
-# Command Title
+# 命令标题
 
-## Context
+## 上下文
 
 - 当前分支：!`git branch --show-current`
 - 相关文件：@package.json
 
-## Instructions
+## 操作说明
 
 1. 第一步
 2. 第二步（使用参数：$ARGUMENTS）
 3. 第三步
 
-## Output Format
+## 输出格式
 
 - 如何格式化回复
 - 需要包含的内容
@@ -591,7 +591,7 @@ allowed-tools: Bash(npm *), Bash(git *)
 
 <a id="skill-vs-command-conflict"></a>
 
-### Skill 与 Command 冲突
+### Skill 与旧版 command 冲突
 
 若同名两者都存在，**以 Skill 为准**。删除其一或重命名。
 

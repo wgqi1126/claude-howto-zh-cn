@@ -1,14 +1,14 @@
 ---
-name: Review PR
-description: Start comprehensive PR review with security and testing checks
+name: PR 审查
+description: 启动包含安全与测试检查的全面 PR 审查
 ---
 
-# PR Review
+# PR 审查
 
-This command initiates a complete pull request review including:
+本命令会启动完整的拉取请求审查，包括：
 
-1. Security analysis
-2. Test coverage verification
-3. Documentation updates
-4. Code quality checks
-5. Performance impact assessment
+1. 安全分析
+2. 测试覆盖验证
+3. 文档更新
+4. 代码质量检查
+5. 性能影响评估
