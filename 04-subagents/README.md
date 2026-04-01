@@ -186,7 +186,7 @@ claude --agents '{
   "agent-name": {
     "description": "必填：何时调用该智能体",
     "prompt": "必填：智能体的系统提示",
-    "tools": ["可选", "工具", "数组"],
+    "tools": ["Read", "Grep", "Glob"],
     "model": "可选：sonnet|opus|haiku"
   }
 }
@@ -338,7 +338,7 @@ Claude 会根据以下因素主动委派任务：
 ```yaml
 ---
 name: code-reviewer
-description: Expert code review specialist. Use PROACTIVELY after writing or modifying code.
+description: 专家级代码审查。编写或修改代码后请主动调用（Use PROACTIVELY）。
 ---
 ```
 
@@ -391,11 +391,11 @@ Subagents 可在保留完整上下文的情况下继续之前的对话：
 
 ```bash
 # 首次调用
-> 使用 code-analyzer 智能体开始审查认证模块
+> Use the code-analyzer agent to start reviewing the authentication module
 # 返回 agentId: "abc123"
 
 # 稍后恢复该智能体
-> Resume agent abc123 并同时分析授权逻辑
+> Resume agent abc123 and now analyze the authorization logic as well
 ```
 
 **适用场景**：
@@ -411,8 +411,8 @@ Subagents 可在保留完整上下文的情况下继续之前的对话：
 按顺序执行多个 Subagents：
 
 ```bash
-> First use the code-analyzer subagent to find performance issues,
-  then use the optimizer subagent to fix them
+> 先用 code-analyzer Subagent 查找性能问题，
+  再用 optimizer Subagent 修复
 ```
 
 便于构建复杂工作流：一个 Subagent 的输出可作为下一个的输入。
@@ -446,10 +446,10 @@ name: researcher
 memory: user
 ---
 
-You are a research assistant. Use your memory directory to store findings,
-track progress across sessions, and build up knowledge over time.
+你是一名研究助手。请使用 memory 目录存储发现、
+跨会话跟踪进度，并随时间积累知识。
 
-Check your MEMORY.md file at the start of each session to recall previous context.
+每次会话开始时查看 MEMORY.md，以回忆先前上下文。
 ```
 
 ```mermaid
@@ -480,7 +480,7 @@ Subagents 可在后台运行，主对话可同时进行其他任务。
 ---
 name: long-runner
 background: true
-description: Performs long-running analysis tasks in the background
+description: 在后台执行耗时分析任务
 ---
 ```
 
@@ -512,7 +512,7 @@ export CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1
 ---
 name: feature-builder
 isolation: worktree
-description: Implements features in an isolated git worktree
+description: 在隔离的 git worktree 中实现功能
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 ```
@@ -551,12 +551,12 @@ graph TB
 ```yaml
 ---
 name: coordinator
-description: Coordinates work between specialized agents
+description: 在专职智能体之间协调工作
 tools: Agent(worker, researcher), Read, Bash
 ---
 
-You are a coordinator agent. You can delegate work to the "worker" and
-"researcher" subagents only. Use Read and Bash for your own exploration.
+你是一名协调智能体。你只能将工作委派给 "worker" 和
+"researcher" Subagent。请使用 Read 和 Bash 进行自主探索。
 ```
 
 本例中，`coordinator` Subagent 只能派生 `worker` 与 `researcher` Subagents，即使别处定义了其他 Subagent 也无法派生。
@@ -575,7 +575,7 @@ claude agents
 该命令会：
 - 展示所有来源中的全部智能体
 - 按来源位置分组
-- 当高优先级智能体覆盖低优先级同名智能体时标明 **overrides**（例如项目级与用户级同名）
+- 当高优先级智能体覆盖低优先级同名智能体时标明 **overrides（覆盖）**（例如项目级与用户级同名）
 
 ---
 
@@ -620,8 +620,8 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 启用后，在提示中让 Claude 与队友协作：
 
 ```
-User: Build the authentication module. Use a team — one teammate for the API endpoints,
-      one for the database schema, and one for the test suite.
+用户：构建认证模块。使用团队：一名队友负责 API 端点，
+      一名负责数据库 schema，一名负责测试套件。
 ```
 
 Claude 将创建团队、分配任务并自动协调。
@@ -783,9 +783,9 @@ sequenceDiagram
     participant CodeReviewer as 代码审查<br/>Subagent
     participant Context as 独立<br/>上下文窗口
 
-    User->>MainAgent: "Build new auth feature"
+    User->>MainAgent: "构建新的认证功能"
     MainAgent->>MainAgent: 分析任务
-    MainAgent->>CodeReviewer: "Review this code"
+    MainAgent->>CodeReviewer: "审查这段代码"
     CodeReviewer->>Context: 初始化干净上下文
     Context->>CodeReviewer: 加载审查说明
     CodeReviewer->>CodeReviewer: 执行审查
@@ -879,28 +879,28 @@ graph TB
 
 1. **明确角色**
    ```
-   You are an expert code reviewer specializing in [specific areas]
+   你是专注于 [具体领域] 的代码审查专家
    ```
 
 2. **清楚列出优先级**
    ```
-   Review priorities (in order):
-   1. Security Issues
-   2. Performance Problems
-   3. Code Quality
+   审查优先级（顺序）：
+   1. 安全问题
+   2. 性能问题
+   3. 代码质量
    ```
 
 3. **指定输出格式**
    ```
-   For each issue provide: Severity, Category, Location, Description, Fix, Impact
+   每个问题请提供：严重程度、类别、位置、描述、修复建议、影响
    ```
 
 4. **包含行动步骤**
    ```
-   When invoked:
-   1. Run git diff to see recent changes
-   2. Focus on modified files
-   3. Begin review immediately
+   被调用时：
+   1. 运行 git diff 查看近期变更
+   2. 聚焦已修改文件
+   3. 立即开始审查
    ```
 
 ### 工具访问策略
@@ -1039,8 +1039,8 @@ graph TB
 ```
 
 然后：
-1. 选择「Create New Agent」
-2. 选择 project-level 或 user-level
+1. 选择「Create New Agent」（创建新智能体）
+2. 选择 project-level（项目级）或 user-level（用户级）
 3. 详细描述你的 Subagent
 4. 选择要授予的工具（或留空以继承全部）
 5. 保存并使用

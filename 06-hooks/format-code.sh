@@ -5,7 +5,7 @@
 FILE=$1
 
 if [ -z "$FILE" ]; then
-  echo "用法: $0 <file_path>"
+  echo "用法：$0 <文件路径>"
   exit 1
 fi
 

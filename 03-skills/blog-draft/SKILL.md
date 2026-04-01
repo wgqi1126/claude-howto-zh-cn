@@ -1,241 +1,241 @@
 ---
 name: blog-draft
-description: Draft a blog post from ideas and resources. Use when users want to write a blog post, create content from research, or draft articles. Guides through research, brainstorming, outlining, and iterative drafting with version control.
+description: 根据想法与资料起草博客文章。在用户想写博客、基于调研创作内容或起草文章时使用。引导完成调研、头脑风暴、列大纲，以及带版本控制的迭代起草。
 ---
 
-## User Input
+## 用户输入
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding. User should provide:
-- **Idea/Topic**: The main concept or theme for the blog post
-- **Resources**: URLs, files, or references to research (optional but recommended)
-- **Target audience**: Who the blog post is for (optional)
-- **Tone/Style**: Formal, casual, technical, etc. (optional)
+在继续之前，你**必须**考虑用户输入。用户应提供：
+- **想法/主题**：文章的核心概念或主题
+- **资料**：用于调研的 URL、文件或参考文献（可选，但建议提供）
+- **目标读者**：文章面向谁（可选）
+- **语气/风格**：正式、随意、技术向等（可选）
 
-**IMPORTANT**: If the user is requesting updates to an **existing blog post**, skip steps 0-8 and start directly at **Step 9**. Read the existing draft file(s) first, then proceed with the iteration process.
+**重要**：若用户请求**更新已有博客文章**，跳过步骤 0–8，直接从**步骤 9** 开始。先阅读已有草稿文件，再进入迭代流程。
 
-## Execution Flow
+## 执行流程
 
-Follow these steps sequentially. **Do not skip steps or proceed without user approval where indicated.**
+按顺序执行下列步骤。**不得跳过步骤；凡注明需用户确认的，未取得用户同意前不得继续。**
 
-### Step 0: Create Project Folder
+### 步骤 0：创建项目文件夹
 
-1. Generate a folder name using format: `YYYY-MM-DD-short-topic-name`
-   - Use today's date
-   - Create a short, URL-friendly slug from the topic (lowercase, hyphens, max 5 words)
+1. 按以下格式生成文件夹名：`YYYY-MM-DD-short-topic-name`
+   - 使用今天的日期
+   - 从主题生成简短、适合 URL 的 slug（小写、连字符、最多 5 个词）
 
-2. Create the folder structure:
+2. 创建文件夹结构：
    ```
    blog-posts/
    └── YYYY-MM-DD-short-topic-name/
        └── resources/
    ```
 
-3. Confirm folder creation with user before proceeding.
+3. 创建文件夹后，先与用户确认再继续。
 
-### Step 1: Research & Resource Collection
+### 步骤 1：调研与资料收集
 
-1. Create `resources/` subfolder in the blog post directory
+1. 在博客文章目录下创建 `resources/` 子文件夹
 
-2. For each provided resource:
-   - **URLs**: Fetch and save key information to `resources/` as markdown files
-   - **Files**: Read and summarize in `resources/`
-   - **Topics**: Use web search to gather up-to-date information
+2. 对每条提供的资料：
+   - **URL**：抓取并保存要点到 `resources/`，存为 Markdown 文件
+   - **文件**：阅读并在 `resources/` 中撰写摘要
+   - **主题**：使用网络检索获取最新信息
 
-3. For each resource, create a summary file in `resources/`:
+3. 为每条资料在 `resources/` 中创建摘要文件：
    - `resources/source-1-[short-name].md`
    - `resources/source-2-[short-name].md`
-   - etc.
+   - 依此类推
 
-4. Each summary should include:
+4. 每份摘要应包含：
    ```markdown
-   # Source: [Title/URL]
+   # 来源：[标题/URL]
 
-   ## Key Points
-   - Point 1
-   - Point 2
+   ## 要点
+   - 要点 1
+   - 要点 2
 
-   ## Relevant Quotes/Data
-   - Quote or statistic 1
-   - Quote or statistic 2
+   ## 相关引述/数据
+   - 引述或统计 1
+   - 引述或统计 2
 
-   ## How This Relates to Topic
-   Brief explanation of relevance
+   ## 与主题的关系
+   简要说明相关性
    ```
 
-5. Present research summary to user.
+5. 向用户展示调研摘要。
 
-### Step 2: Brainstorm & Clarify
+### 步骤 2：头脑风暴与澄清
 
-1. Based on the idea and researched resources, present:
-   - **Main themes** identified from research
-   - **Potential angles** for the blog post
-   - **Key points** that should be covered
-   - **Gaps** in information that need clarification
+1. 基于想法与已调研资料，向用户呈现：
+   - 从调研中归纳的**主要主题**
+   - 文章可采取的**潜在角度**
+   - 应覆盖的**要点**
+   - 需要进一步澄清的**信息缺口**
 
-2. Ask clarifying questions:
-   - What is the main takeaway you want readers to have?
-   - Are there specific points from the research you want to emphasize?
-   - What's the target length? (short: 500-800 words, medium: 1000-1500, long: 2000+)
-   - Any points you want to exclude?
+2. 提出澄清问题，例如：
+   - 你希望读者带走的核心结论是什么？
+   - 是否有希望特别强调的调研要点？
+   - 目标篇幅？（短：500–800 字；中：1000–1500；长：2000 字以上）
+   - 是否有希望排除的内容？
 
-3. **Wait for user responses before proceeding.**
+3. **等待用户回复后再继续。**
 
-### Step 3: Propose Outline
+### 步骤 3：提出大纲
 
-1. Create a structured outline including:
+1. 创建结构化大纲，包含：
 
    ```markdown
-   # Blog Post Outline: [Title]
+   # 博客文章大纲：[标题]
 
-   ## Meta Information
-   - **Target Audience**: [who]
-   - **Tone**: [style]
-   - **Target Length**: [word count]
-   - **Main Takeaway**: [key message]
+   ## 元信息
+   - **目标读者**：[who]
+   - **语气/风格**：[style]
+   - **目标篇幅**：[字数]
+   - **核心结论**：[key message]
 
-   ## Proposed Structure
+   ## 建议结构
 
-   ### Hook/Introduction
-   - Opening hook idea
-   - Context setting
-   - Thesis statement
+   ### 钩子/引言
+   - 开篇钩子思路
+   - 背景铺垫
+   - 中心论点
 
-   ### Section 1: [Title]
-   - Key point A
-   - Key point B
-   - Supporting evidence from [source]
+   ### 第一节：[标题]
+   - 要点 A
+   - 要点 B
+   - 来自 [source] 的支撑论据
 
-   ### Section 2: [Title]
-   - Key point A
-   - Key point B
+   ### 第二节：[标题]
+   - 要点 A
+   - 要点 B
 
-   [Continue for all sections...]
+   [其余小节依此类推……]
 
-   ### Conclusion
-   - Summary of key points
-   - Call to action or final thought
+   ### 结论
+   - 要点回顾
+   - 行动号召或收尾思考
 
-   ## Sources to Cite
-   - Source 1
-   - Source 2
+   ## 拟引用来源
+   - 来源 1
+   - 来源 2
    ```
 
-2. Present outline to user and **ask for approval or modifications**.
+2. 向用户展示大纲，并**征求同意或修改意见**。
 
-### Step 4: Save Approved Outline
+### 步骤 4：保存已批准的大纲
 
-1. Once user approves the outline, save it to `OUTLINE.md` in the blog post folder.
+1. 用户批准大纲后，将其保存到博客文章文件夹中的 `OUTLINE.md`。
 
-2. Confirm the outline has been saved.
+2. 确认大纲已保存。
 
-### Step 5: Commit Outline (if in git repo)
+### 步骤 5：提交大纲（若在 git 仓库中）
 
-1. Check if current directory is a git repository.
+1. 检查当前目录是否为 git 仓库。
 
-2. If yes:
-   - Stage the new files: blog post folder, resources, and OUTLINE.md
-   - Create commit with message: `docs: Add outline for blog post - [topic-name]`
-   - Push to remote
+2. 若是：
+   - 暂存新文件：博客文章文件夹、`resources/` 与 `OUTLINE.md`
+   - 使用提交信息：`文档: 为博客文章添加大纲 - [topic-name]`
+   - 推送到远程
 
-3. If not a git repo, skip this step and inform user.
+3. 若不是 git 仓库，跳过本步并告知用户。
 
-### Step 6: Write Draft
+### 步骤 6：撰写草稿
 
-1. Based on the approved outline, write the full blog post draft.
+1. 根据已批准的大纲撰写完整博客草稿。
 
-2. Follow the structure from OUTLINE.md exactly.
+2. 严格遵循 `OUTLINE.md` 中的结构。
 
-3. Include:
-   - Engaging introduction with hook
-   - Clear section headers
-   - Supporting evidence and examples from research
-   - Smooth transitions between sections
-   - Strong conclusion with takeaway
-   - **Citations**: All comparisons, statistics, data points, and factual claims MUST cite the original source
+3. 包含：
+   - 带钩子的引人入胜的开头
+   - 清晰的小节标题
+   - 来自调研的支撑论据与示例
+   - 小节之间的顺畅过渡
+   - 有力的结尾与可带走的结论
+   - **引用**：凡比较、统计、数据点与事实性陈述**必须**注明原始出处
 
-4. Save the draft as `draft-v0.1.md` in the blog post folder.
+4. 将草稿保存为博客文章文件夹中的 `draft-v0.1.md`。
 
-5. Format:
+5. 格式示例：
    ```markdown
-   # [Blog Post Title]
+   # [博客文章标题]
 
-   *[Optional: subtitle or tagline]*
+   *[可选：副标题或标语]*
 
-   [Full content with inline citations...]
+   [正文，含文内引用……]
 
    ---
 
-   ## References
-   - [1] Source 1 Title - URL or Citation
-   - [2] Source 2 Title - URL or Citation
-   - [3] Source 3 Title - URL or Citation
+   ## 参考文献
+   - [1] 来源 1 标题 - URL 或引用信息
+   - [2] 来源 2 标题 - URL 或引用信息
+   - [3] 来源 3 标题 - URL 或引用信息
    ```
 
-6. **Citation Requirements**:
-   - Every data point, statistic, or comparison MUST have an inline citation
-   - Use numbered references [1], [2], etc., or named citations [Source Name]
-   - Link citations to the References section at the end
-   - Example: "Studies show that 65% of developers prefer TypeScript [1]"
-   - Example: "React outperforms Vue in rendering speed by 20% [React Benchmarks 2024]"
+6. **引用要求**：
+   - 每个数据点、统计或比较都**必须**有文内引用
+   - 使用编号引用 [1]、[2] 等，或具名引用 [来源名称]
+   - 文内引用与文末「参考文献」一节对应
+   - 示例：`研究表明 65% 的开发者更偏好 TypeScript [1]`
+   - 示例：`React 在渲染速度上比 Vue 快约 20% [React Benchmarks 2024]`
 
-### Step 7: Commit Draft (if in git repo)
+### 步骤 7：提交草稿（若在 git 仓库中）
 
-1. Check if in git repository.
+1. 检查是否在 git 仓库中。
 
-2. If yes:
-   - Stage the draft file
-   - Create commit with message: `docs: Add draft v0.1 for blog post - [topic-name]`
-   - Push to remote
+2. 若是：
+   - 暂存草稿文件
+   - 使用提交信息：`文档: 为博客文章添加草稿 v0.1 - [topic-name]`
+   - 推送到远程
 
-3. If not a git repo, skip and inform user.
+3. 若不是 git 仓库，跳过并告知用户。
 
-### Step 8: Present Draft for Review
+### 步骤 8：展示草稿供审阅
 
-1. Present the draft content to user.
+1. 向用户展示草稿内容。
 
-2. Ask for feedback:
-   - Overall impression?
-   - Sections that need expansion or reduction?
-   - Tone adjustments needed?
-   - Missing information?
-   - Specific edits or rewrites?
+2. 征求反馈，例如：
+   - 整体印象？
+   - 哪些部分需要扩充或压缩？
+   - 语气是否需要调整？
+   - 是否缺少信息？
+   - 是否有具体修改或重写要求？
 
-3. **Wait for user response.**
+3. **等待用户回复。**
 
-### Step 9: Iterate or Finalize
+### 步骤 9：迭代或定稿
 
-**If user requests changes:**
-1. Note all requested modifications
-2. Return to Step 6 with the following adjustments:
-   - Increment version number (v0.2, v0.3, etc.)
-   - Incorporate all feedback
-   - Save as `draft-v[X.Y].md`
-   - Repeat Steps 7-8
+**若用户要求修改：**
+1. 记录所有修改要求
+2. 回到步骤 6，并做如下调整：
+   - 递增版本号（v0.2、v0.3 等）
+   - 纳入全部反馈
+   - 保存为 `draft-v[X.Y].md`
+   - 重复步骤 7–8
 
-**If user approves:**
-1. Confirm the final draft version
-2. Optionally rename to `final.md` if user requests
-3. Summarize the blog post creation process:
-   - Total versions created
-   - Key changes between versions
-   - Final word count
-   - Files created
+**若用户批准：**
+1. 确认最终草稿版本
+2. 若用户要求，可将文件重命名为 `final.md`
+3. 总结博客创作过程：
+   - 共产生多少个版本
+   - 各版本之间的主要变更
+   - 最终字数
+   - 创建的文件
 
-## Version Tracking
+## 版本追踪
 
-All drafts are preserved with incremental versioning:
-- `draft-v0.1.md` - Initial draft
-- `draft-v0.2.md` - After first round of feedback
-- `draft-v0.3.md` - After second round of feedback
-- etc.
+所有草稿按递增版本保留：
+- `draft-v0.1.md` — 初稿
+- `draft-v0.2.md` — 第一轮反馈后
+- `draft-v0.3.md` — 第二轮反馈后
+- 依此类推
 
-This allows tracking the evolution of the blog post and reverting if needed.
+便于追踪文章演变，并在需要时回退。
 
-## Output Files Structure
+## 输出文件结构
 
 ```
 blog-posts/
@@ -246,29 +246,29 @@ blog-posts/
     │   └── ...
     ├── OUTLINE.md
     ├── draft-v0.1.md
-    ├── draft-v0.2.md (if iterations)
-    └── draft-v0.3.md (if more iterations)
+    ├── draft-v0.2.md（若有迭代）
+    └── draft-v0.3.md（若继续迭代）
 ```
 
-## Tips for Quality
+## 质量提示
 
-- **Hook**: Start with a question, surprising fact, or relatable scenario
-- **Flow**: Each paragraph should connect to the next
-- **Evidence**: Support claims with data from research
-- **Citations**: ALWAYS cite sources for:
-  - All statistics and data points (e.g., "According to [Source], 75% of...")
-  - Comparisons between products, services, or approaches (e.g., "X performs 2x faster than Y [Source]")
-  - Factual claims about market trends, research findings, or benchmarks
-  - Use inline citations with format: [Source Name] or [Author, Year]
-- **Voice**: Maintain consistent tone throughout
-- **Length**: Respect the target word count
-- **Readability**: Use short paragraphs, bullet points where appropriate
-- **CTA**: End with a clear call-to-action or thought-provoking question
+- **开头钩子**：以问题、出人意料的事实或易共鸣的情境开篇
+- **行文**：段落之间要有衔接
+- **论据**：用调研中的数据支撑观点
+- **引用**：对以下内容**务必**注明来源：
+  - 所有统计与数据点（例如：`据 [来源]，75% 的……`）
+  - 产品、服务或方案之间的比较（例如：`X 比 Y 快约一倍 [来源]`）
+  - 关于市场趋势、研究发现或基准测试的事实陈述
+  - 文内引用格式：[来源名称] 或 [作者, 年份]
+- **口吻**：全文语气一致
+- **篇幅**：遵守目标字数
+- **可读性**：段落宜短，适当使用列表
+- **结尾行动号召（CTA）**：以明确的行动号召或发人深省的问题收束
 
-## Notes
+## 说明
 
-- Always wait for user approval at outlined checkpoints
-- Preserve all draft versions for history
-- Use web search for up-to-date information when URLs are provided
-- If resources are insufficient, ask user for more or suggest additional research
-- Adapt tone based on target audience (technical, general, business, etc.)
+- 在标明的检查点处务必等待用户确认
+- 保留所有草稿版本以便留档
+- 用户提供 URL 时，使用网络检索获取最新信息
+- 若资料不足，请向用户索要更多资料或建议补充调研
+- 根据目标读者（技术向、大众、商业等）调整语气

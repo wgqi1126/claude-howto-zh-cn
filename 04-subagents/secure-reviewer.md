@@ -73,8 +73,3 @@ grep -r "os.system" --include="*.py"
 - **说明**：漏洞是什么
 - **风险**：被利用后的潜在影响
 - **修复建议**：如何修复
-</think>
-正在移除误加的结尾 ```。
-
-<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
-StrReplace

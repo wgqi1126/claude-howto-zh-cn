@@ -1,14 +1,14 @@
 ---
-name: Sync Documentation
-description: Sync documentation with code changes
+name: 同步文档
+description: 将文档与代码变更同步
 ---
 
-# Documentation Sync
+# 文档同步
 
-Synchronize documentation with codebase:
+将文档与代码库对齐：
 
-1. Detect code changes
-2. Identify outdated documentation
-3. Update affected docs
-4. Verify examples still work
-5. Update version numbers
+1. 检测代码变更
+2. 识别过时文档
+3. 更新受影响的文档
+4. 确认示例仍可运行
+5. 更新版本号

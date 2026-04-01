@@ -1,15 +1,15 @@
 ---
-name: Deploy
-description: Deploy application to production or staging
+name: 部署
+description: 将应用部署到生产或预发布（staging）环境
 ---
 
-# Deploy Application
+# 部署应用
 
-Execute deployment workflow:
+执行部署工作流：
 
-1. Run pre-deployment checks
-2. Build application
-3. Run tests
-4. Deploy to target environment
-5. Run health checks
-6. Notify team on Slack
+1. 运行部署前检查
+2. 构建应用
+3. 运行测试
+4. 部署到目标环境
+5. 运行健康检查
+6. 在 Slack 上通知团队

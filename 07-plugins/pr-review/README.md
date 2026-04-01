@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="../../resources/logos/claude-howto-logo-dark.svg">
-  <img alt="Claude How To" src="../../resources/logos/claude-howto-logo.svg">
+  <img alt="Claude How To 教程" src="../../resources/logos/claude-howto-logo.svg">
 </picture>
 
 # PR 审查插件

@@ -1,7 +1,7 @@
 {
   "name": "devops-automation",
   "version": "1.0.0",
-  "description": "Complete DevOps automation for deployment, monitoring, and incident response",
+  "description": "面向部署、监控与事件响应的完整 DevOps 自动化",
   "author": {
     "name": "Community"
   },

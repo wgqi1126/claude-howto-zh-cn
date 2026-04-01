@@ -1,87 +1,88 @@
 ---
 name: code-refactor
-description: Systematic code refactoring based on Martin Fowler's methodology. Use when users ask to refactor code, improve code structure, reduce technical debt, clean up legacy code, eliminate code smells, or improve code maintainability. This skill guides through a phased approach with research, planning, and safe incremental implementation.
+description: 基于 Martin Fowler 方法论的系统化代码重构。在用户要求重构代码、改进结构、降低技术债、清理遗留代码、消除代码异味或提升可维护性时使用。本 Skill 分阶段引导：调研、规划与安全增量实施。
 ---
 
-# Code Refactoring Skill
+# 代码重构 Skill
 
-A systematic approach to refactoring code based on Martin Fowler's *Refactoring: Improving the Design of Existing Code* (2nd Edition). This skill emphasizes safe, incremental changes backed by tests.
+基于 Martin Fowler《重构：改善既有代码的设计》（*Refactoring: Improving the Design of Existing Code*，第 2 版）的系统化重构方法。本 Skill 强调在测试保护下进行安全、增量式改动。
 
-> "Refactoring is the process of changing a software system in such a way that it does not alter the external behavior of the code yet improves its internal structure." — Martin Fowler
 
-## Core Principles
+> 「重构是在不改变代码外在行为的前提下，改变软件系统内部结构的过程。」—— Martin Fowler
 
-1. **Behavior Preservation**: External behavior must remain unchanged
-2. **Small Steps**: Make tiny, testable changes
-3. **Test-Driven**: Tests are the safety net
-4. **Continuous**: Refactoring is ongoing, not a one-time event
-5. **Collaborative**: User approval required at each phase
+## 核心原则
 
-## Workflow Overview
+1. **行为不变**：对外行为必须保持不变  
+2. **小步前进**：每次只做微小、可验证的改动  
+3. **测试驱动**：测试是安全网  
+4. **持续进行**：重构是常态，不是一次性任务  
+5. **协作确认**：每个阶段都需要用户同意  
+
+## 工作流概览
 
 ```
-Phase 1: Research & Analysis
+阶段 1：调研与分析
     ↓
-Phase 2: Test Coverage Assessment
+阶段 2：测试覆盖评估
     ↓
-Phase 3: Code Smell Identification
+阶段 3：代码异味识别
     ↓
-Phase 4: Refactoring Plan Creation
+阶段 4：制定重构计划
     ↓
-Phase 5: Incremental Implementation
+阶段 5：增量实施
     ↓
-Phase 6: Review & Iteration
+阶段 6：回顾与迭代
 ```
 
 ---
 
-## Phase 1: Research & Analysis
+## 阶段 1：调研与分析
 
-### Objectives
-- Understand the codebase structure and purpose
-- Identify the scope of refactoring
-- Gather context about business requirements
+### 目标
+- 理解代码库结构与用途  
+- 明确重构范围  
+- 收集业务需求相关上下文  
 
-### Questions to Ask User
-Before starting, clarify:
+### 向用户澄清的问题
+开始前请先弄清：
 
-1. **Scope**: Which files/modules/functions need refactoring?
-2. **Goals**: What problems are you trying to solve? (readability, performance, maintainability)
-3. **Constraints**: Are there any areas that should NOT be changed?
-4. **Timeline pressure**: Is this blocking other work?
-5. **Test status**: Do tests exist? Are they passing?
+1. **范围**：哪些文件/模块/函数需要重构？  
+2. **目标**：要解决什么问题？（可读性、性能、可维护性）  
+3. **约束**：有哪些区域**不应**改动？  
+4. **时间压力**：是否会阻塞其他工作？  
+5. **测试现状**：是否有测试？是否通过？  
 
-### Actions
-- [ ] Read and understand the target code
-- [ ] Identify dependencies and integrations
-- [ ] Document current architecture
-- [ ] Note any existing technical debt markers (TODOs, FIXMEs)
+### 行动项
+- [ ] 阅读并理解目标代码  
+- [ ] 识别依赖与集成点  
+- [ ] 记录当前架构  
+- [ ] 标注已有技术债标记（TODO、FIXME 等）  
 
-### Output
-Present findings to user:
-- Code structure summary
-- Identified problem areas
-- Initial recommendations
-- **Request approval to proceed**
+### 产出
+向用户呈现调研结论：
+- 代码结构摘要  
+- 已识别的问题区域  
+- 初步建议  
+- **请求确认是否继续**  
 
 ---
 
-## Phase 2: Test Coverage Assessment
+## 阶段 2：测试覆盖评估
 
-### Why Tests Matter
-> "Refactoring without tests is like driving without a seatbelt." — Martin Fowler
+### 为何需要测试
+> 「没有测试就重构，就像不系安全带开车。」—— Martin Fowler
 
-Tests are the **key enabler** of safe refactoring. Without them, you risk introducing bugs.
+测试是安全重构的**关键前提**。没有测试，很容易引入缺陷。
 
-### Assessment Steps
+### 评估步骤
 
-1. **Check for existing tests**
+1. **查找已有测试**
    ```bash
-   # Look for test files
+   # 查找测试文件
    find . -name "*test*" -o -name "*spec*" | head -20
    ```
 
-2. **Run existing tests**
+2. **运行已有测试**
    ```bash
    # JavaScript/TypeScript
    npm test
@@ -93,7 +94,7 @@ Tests are the **key enabler** of safe refactoring. Without them, you risk introd
    mvn test
    ```
 
-3. **Check coverage (if available)**
+3. **查看覆盖率（若项目支持）**
    ```bash
    # JavaScript
    npm run test:coverage
@@ -102,303 +103,303 @@ Tests are the **key enabler** of safe refactoring. Without them, you risk introd
    pytest --cov=.
    ```
 
-### Decision Point: Ask User
+### 决策点：询问用户
 
-**If tests exist and pass:**
-- Proceed to Phase 3
+**若测试存在且通过：**
+- 进入阶段 3  
 
-**If tests are missing or incomplete:**
-Present options:
-1. Write tests first (recommended)
-2. Add tests incrementally during refactoring
-3. Proceed without tests (risky - requires user acknowledgment)
+**若测试缺失或不完整：**
+向用户说明可选方案：
+1. 先补测试（推荐）  
+2. 在重构过程中增量补测试  
+3. 无测试继续（有风险——需用户明确知情并承担）  
 
-**If tests are failing:**
-- STOP. Fix failing tests before refactoring
-- Ask user: Should we fix tests first?
+**若测试失败：**
+- **停止**。先修复失败测试再谈重构  
+- 询问用户：是否先修测试？  
 
-### Test Writing Guidelines (if needed)
+### 测试编写指引（如需要）
 
-For each function being refactored, ensure tests cover:
-- Happy path (normal operation)
-- Edge cases (empty inputs, null, boundaries)
-- Error scenarios (invalid inputs, exceptions)
+对每个待重构的函数，确保测试覆盖：
+- 主路径（正常流程）  
+- 边界情况（空输入、null、边界值）  
+- 错误场景（非法输入、异常）  
 
-Use the "red-green-refactor" cycle:
-1. Write failing test (red)
-2. Make it pass (green)
-3. Refactor
+采用「红-绿-重构」循环：
+1. 先写失败测试（红）  
+2. 再让测试通过（绿）  
+3. 最后重构  
 
 ---
 
-## Phase 3: Code Smell Identification
+## 阶段 3：代码异味识别
 
-### What Are Code Smells?
-Symptoms of deeper problems in code. They're not bugs, but indicators that the code could be improved.
+### 什么是代码异味？
+代码异味是更深层次问题的表象。它们不是 bug，但说明代码有改进空间。
 
-### Common Code Smells to Check
+### 常见代码异味检查清单
 
-See [references/code-smells.md](references/code-smells.md) for the complete catalog.
+完整列表见 [references/code-smells.md](references/code-smells.md)。
 
-#### Quick Reference
+#### 速查表
 
-| Smell | Signs | Impact |
+| 异味 | 表现 | 影响 |
 |-------|-------|--------|
-| **Long Method** | Methods > 30-50 lines | Hard to understand, test, maintain |
-| **Duplicated Code** | Same logic in multiple places | Bug fixes needed in multiple places |
-| **Large Class** | Class with too many responsibilities | Violates Single Responsibility |
-| **Feature Envy** | Method uses another class's data more | Poor encapsulation |
-| **Primitive Obsession** | Overuse of primitives instead of objects | Missing domain concepts |
-| **Long Parameter List** | Methods with 4+ parameters | Hard to call correctly |
-| **Data Clumps** | Same data items appearing together | Missing abstraction |
-| **Switch Statements** | Complex switch/if-else chains | Hard to extend |
-| **Speculative Generality** | Code "just in case" | Unnecessary complexity |
-| **Dead Code** | Unused code | Confusion, maintenance burden |
+| **过长方法** | 方法超过约 30–50 行 | 难理解、难测试、难维护 |
+| **重复代码** | 相同逻辑出现在多处 | 修 bug 要改多处 |
+| **过大类** | 类承担过多职责 | 违背单一职责 |
+| **依恋情结** | 方法更多使用其他类的数据 | 封装不佳 |
+| **基本类型偏执** | 过度使用原始类型而非对象 | 缺少领域概念 |
+| **过长参数列** | 方法参数过多（例如 4 个以上） | 难正确调用 |
+| **数据泥团** | 多项数据总是一起出现 | 缺少抽象 |
+| **switch 语句** | 复杂的 switch/if-else 链 | 难扩展 |
+| **夸夸其谈未来性** | 「以防万一」的代码 | 不必要复杂度 |
+| **死代码** | 未使用代码 | 困惑与维护负担 |
 
-### Analysis Steps
+### 分析步骤
 
-1. **Automated Analysis** (if scripts available)
+1. **自动化分析**（若有脚本）
    ```bash
    python scripts/detect-smells.py <file>
    ```
 
-2. **Manual Review**
-   - Walk through code systematically
-   - Note each smell with location and severity
-   - Categorize by impact (Critical/High/Medium/Low)
+2. **人工走查**
+   - 系统通读代码  
+   - 记录每种异味的位置与严重程度  
+   - 按影响分类（严重/高/中/低）  
 
-3. **Prioritization**
-   Focus on smells that:
-   - Block current development
-   - Cause bugs or confusion
-   - Affect most-changed code paths
+3. **排优先级**
+   优先处理：
+   - 阻碍当前开发的异味  
+   - 导致缺陷或困惑的异味  
+   - 位于高频变更路径上的异味  
 
-### Output: Smell Report
+### 产出：异味报告
 
-Present to user:
-- List of identified smells with locations
-- Severity assessment for each
-- Recommended priority order
-- **Request approval on priorities**
+向用户呈现：
+- 已识别异味及位置列表  
+- 每项的严重程度评估  
+- 建议的处理顺序  
+- **请用户确认优先级**  
 
 ---
 
-## Phase 4: Refactoring Plan Creation
+## 阶段 4：制定重构计划
 
-### Selecting Refactorings
+### 选择重构手法
 
-For each smell, select an appropriate refactoring from the catalog.
+针对每种异味，从目录中选取合适重构。
 
-See [references/refactoring-catalog.md](references/refactoring-catalog.md) for the complete list.
+完整列表见 [references/refactoring-catalog.md](references/refactoring-catalog.md)。
 
-#### Smell-to-Refactoring Mapping
+#### 异味与重构手法对应（示例）
 
-| Code Smell | Recommended Refactoring(s) |
+| 代码异味 | 建议重构手法 |
 |------------|---------------------------|
-| Long Method | Extract Method, Replace Temp with Query |
-| Duplicated Code | Extract Method, Pull Up Method, Form Template Method |
-| Large Class | Extract Class, Extract Subclass |
-| Feature Envy | Move Method, Move Field |
-| Primitive Obsession | Replace Primitive with Object, Replace Type Code with Class |
-| Long Parameter List | Introduce Parameter Object, Preserve Whole Object |
-| Data Clumps | Extract Class, Introduce Parameter Object |
-| Switch Statements | Replace Conditional with Polymorphism |
-| Speculative Generality | Collapse Hierarchy, Inline Class, Remove Dead Code |
-| Dead Code | Remove Dead Code |
+| 过长方法 | Extract Method, Replace Temp with Query |
+| 重复代码 | Extract Method, Pull Up Method, Form Template Method |
+| 过大类 | Extract Class, Extract Subclass |
+| 依恋情结 | Move Method, Move Field |
+| 基本类型偏执 | Replace Primitive with Object, Replace Type Code with Class |
+| 过长参数列 | Introduce Parameter Object, Preserve Whole Object |
+| 数据泥团 | Extract Class, Introduce Parameter Object |
+| switch 语句 | Replace Conditional with Polymorphism |
+| 夸夸其谈未来性 | Collapse Hierarchy, Inline Class, Remove Dead Code |
+| 死代码 | Remove Dead Code |
 
-### Plan Structure
+### 计划结构
 
-Use the template at [templates/refactoring-plan.md](templates/refactoring-plan.md).
+使用 [templates/refactoring-plan.md](templates/refactoring-plan.md) 中的模板。
 
-For each refactoring:
-1. **Target**: What code will change
-2. **Smell**: What problem it addresses
-3. **Refactoring**: Which technique to apply
-4. **Steps**: Detailed micro-steps
-5. **Risks**: What could go wrong
-6. **Rollback**: How to undo if needed
+对每一项重构写明：
+1. **目标**：将改动哪些代码  
+2. **异味**：要解决什么问题  
+3. **重构**：采用哪种手法  
+4. **步骤**：细化的微步骤  
+5. **风险**：可能出什么问题  
+6. **回滚**：如何撤销  
 
-### Phased Approach
+### 分阶段推进
 
-**CRITICAL**: Introduce refactoring gradually in phases.
+**关键**：重构要分阶段、渐进引入。
 
-**Phase A: Quick Wins** (Low risk, high value)
-- Rename variables for clarity
-- Extract obvious duplicate code
-- Remove dead code
+**阶段 A：快赢**（低风险、高收益）
+- 重命名变量以提升清晰度  
+- 抽取显而易见的重复代码  
+- 删除死代码  
 
-**Phase B: Structural Improvements** (Medium risk)
-- Extract methods from long functions
-- Introduce parameter objects
-- Move methods to appropriate classes
+**阶段 B：结构改进**（中等风险）
+- 从长函数中抽取方法  
+- 引入参数对象  
+- 将方法移到合适类中  
 
-**Phase C: Architectural Changes** (Higher risk)
-- Replace conditionals with polymorphism
-- Extract classes
-- Introduce design patterns
+**阶段 C：架构级变更**（风险更高）
+- 用多态替代条件分支  
+- 抽取类  
+- 引入设计模式  
 
-### Decision Point: Present Plan to User
+### 决策点：向用户展示计划
 
-Before implementation:
-- Show complete refactoring plan
-- Explain each phase and its risks
-- Get explicit approval for each phase
-- **Ask**: "Should I proceed with Phase A?"
-
----
-
-## Phase 5: Incremental Implementation
-
-### The Golden Rule
-> "Change → Test → Green? → Commit → Next step"
-
-### Implementation Rhythm
-
-For each refactoring step:
-
-1. **Pre-check**
-   - Tests are passing (green)
-   - Code compiles
-
-2. **Make ONE small change**
-   - Follow the mechanics from the catalog
-   - Keep changes minimal
-
-3. **Verify**
-   - Run tests immediately
-   - Check for compilation errors
-
-4. **If tests pass (green)**
-   - Commit with descriptive message
-   - Move to next step
-
-5. **If tests fail (red)**
-   - STOP immediately
-   - Undo the change
-   - Analyze what went wrong
-   - Ask user if unclear
-
-### Commit Strategy
-
-Each commit should be:
-- **Atomic**: One logical change
-- **Reversible**: Easy to revert
-- **Descriptive**: Clear commit message
-
-Example commit messages:
-```
-refactor: Extract calculateTotal() from processOrder()
-refactor: Rename 'x' to 'customerCount' for clarity
-refactor: Remove unused validateOldFormat() method
-```
-
-### Progress Reporting
-
-After each sub-phase, report to user:
-- Changes made
-- Tests still passing?
-- Any issues encountered
-- **Ask**: "Continue with next batch?"
+实施前：
+- 展示完整重构计划  
+- 说明各阶段内容及风险  
+- 取得用户对各阶段的明确同意  
+- **询问**：「是否从阶段 A 开始执行？」  
 
 ---
 
-## Phase 6: Review & Iteration
+## 阶段 5：增量实施
 
-### Post-Refactoring Checklist
+### 黄金法则
+> 「改动 → 测试 → 绿了？→ 提交 → 下一步」
 
-- [ ] All tests passing
-- [ ] No new warnings/errors
-- [ ] Code compiles successfully
-- [ ] Behavior unchanged (manual verification)
-- [ ] Documentation updated if needed
-- [ ] Commit history is clean
+### 实施节奏
 
-### Metrics Comparison
+对每一步重构：
 
-Run complexity analysis before and after:
+1. **前置检查**
+   - 测试通过（绿）  
+   - 代码能编译  
+
+2. **只做一处小改动**
+   - 按目录中的「做法」执行  
+   - 保持改动最小化  
+
+3. **验证**
+   - 立即跑测试  
+   - 检查编译错误  
+
+4. **若测试通过（绿）**
+   - 用清晰信息提交  
+   - 进入下一步  
+
+5. **若测试失败（红）**
+   - **立即停止**  
+   - 撤销该改动  
+   - 分析原因  
+   - 不清楚时询问用户  
+
+### 提交策略
+
+每次提交应：
+- **原子化**：一个逻辑变更  
+- **可回滚**：易于撤销  
+- **说明清楚**：提交信息可读  
+
+提交信息示例：
+```
+重构: 从 processOrder() 中抽取 calculateTotal()
+重构: 将 'x' 重命名为 'customerCount' 以提升可读性
+重构: 删除未使用的 validateOldFormat() 方法
+```
+
+### 进度同步
+
+每个子阶段结束后向用户汇报：
+- 已做改动  
+- 测试是否仍通过  
+- 遇到的问题  
+- **询问**：「是否继续下一批？」  
+
+---
+
+## 阶段 6：回顾与迭代
+
+### 重构后检查清单
+
+- [ ] 全部测试通过  
+- [ ] 无新增告警/错误  
+- [ ] 编译成功  
+- [ ] 行为未变（必要时人工验证）  
+- [ ] 需要时已更新文档  
+- [ ] 提交历史清晰  
+
+### 指标对比
+
+在前后运行复杂度分析：
 ```bash
 python scripts/analyze-complexity.py <file>
 ```
 
-Present improvements:
-- Lines of code change
-- Cyclomatic complexity change
-- Maintainability index change
+展示改进情况：
+- 代码行数变化  
+- 圈复杂度变化  
+- 可维护性指数等变化  
 
-### User Review
+### 用户验收
 
-Present final results:
-- Summary of all changes
-- Before/after code comparison
-- Metrics improvements
-- Remaining technical debt
-- **Ask**: "Are you satisfied with these changes?"
+向用户呈现最终结果：
+- 变更总览  
+- 前后代码对比  
+- 指标改善  
+- 仍存技术债  
+- **询问**：「你对这些改动是否满意？」  
 
-### Next Steps
+### 后续
 
-Discuss with user:
-- Additional smells to address?
-- Schedule follow-up refactoring?
-- Apply similar changes elsewhere?
-
----
-
-## Important Guidelines
-
-### When to STOP and Ask
-
-Always pause and consult user when:
-- Unsure about business logic
-- Change might affect external APIs
-- Test coverage is inadequate
-- Significant architectural decision needed
-- Risk level increases
-- You encounter unexpected complexity
-
-### Safety Rules
-
-1. **Never refactor without tests** (unless user explicitly acknowledges risk)
-2. **Never make big changes** - break into tiny steps
-3. **Never skip the test run** after each change
-4. **Never continue if tests fail** - fix or rollback first
-5. **Never assume** - when in doubt, ask
-
-### What NOT to Do
-
-- Don't combine refactoring with feature additions
-- Don't refactor during production emergencies
-- Don't refactor code you don't understand
-- Don't over-engineer - keep it simple
-- Don't refactor everything at once
+与用户讨论：
+- 是否继续处理其他异味？  
+- 是否安排后续重构？  
+- 是否在其他位置做类似改动？  
 
 ---
 
-## Quick Start Example
+## 重要指引
 
-### Scenario: Long Method with Duplication
+### 何时暂停并询问用户
 
-**Before:**
+在以下情况应暂停并与用户确认：
+- 对业务逻辑不确定  
+- 改动可能影响对外 API  
+- 测试覆盖不足  
+- 需要做重大架构决策  
+- 风险等级上升  
+- 遇到未预期的复杂度  
+
+### 安全规则
+
+1. **无测试不重构**（除非用户明确接受风险）  
+2. **不要大改**——拆成极小步骤  
+3. **每次改动后必跑测试**  
+4. **测试失败不继续**——先修复或先回滚  
+5. **不要臆测**——有疑问就问  
+
+### 不要做
+
+- 不要把重构与加新功能混在同一批改动里  
+- 不要在生产紧急事件期间重构  
+- 不要重构自己尚不理解的代码  
+- 不要过度设计——保持简单  
+- 不要试图一次重构所有东西  
+
+---
+
+## 快速入门示例
+
+### 场景：过长方法且存在重复
+
+**修改前：**
 ```javascript
 function processOrder(order) {
-  // 150 lines of code with:
-  // - Duplicated validation logic
-  // - Inline calculations
-  // - Mixed responsibilities
+  // 约 150 行代码，包含：
+  // - 重复的校验逻辑
+  // - 内联计算
+  // - 职责混杂
 }
 ```
 
-**Refactoring Steps:**
+**重构步骤：**
 
-1. **Ensure tests exist** for processOrder()
-2. **Extract** validation into validateOrder()
-3. **Test** - should pass
-4. **Extract** calculation into calculateOrderTotal()
-5. **Test** - should pass
-6. **Extract** notification into notifyCustomer()
-7. **Test** - should pass
-8. **Review** - processOrder() now orchestrates 3 clear functions
+1. **确保** 对 processOrder() **已有测试**  
+2. **抽取** 校验逻辑为 validateOrder()  
+3. **跑测试** —— 应仍通过  
+4. **抽取** 计算为 calculateOrderTotal()  
+5. **跑测试** —— 应仍通过  
+6. **抽取** 通知为 notifyCustomer()  
+7. **跑测试** —— 应仍通过  
+8. **回顾** —— processOrder() 现仅编排三个清晰函数  
 
-**After:**
+**修改后：**
 ```javascript
 function processOrder(order) {
   validateOrder(order);
@@ -410,17 +411,17 @@ function processOrder(order) {
 
 ---
 
-## References
+## 参考资料
 
-- [Code Smells Catalog](references/code-smells.md) - Complete list of code smells
-- [Refactoring Catalog](references/refactoring-catalog.md) - Refactoring techniques
-- [Refactoring Plan Template](templates/refactoring-plan.md) - Planning template
+- [Code Smells Catalog](references/code-smells.md) —— 代码异味完整列表  
+- [Refactoring Catalog](references/refactoring-catalog.md) —— 重构手法  
+- [Refactoring Plan Template](templates/refactoring-plan.md) —— 计划模板  
 
-## Scripts
+## 脚本
 
-- `scripts/analyze-complexity.py` - Analyze code complexity metrics
-- `scripts/detect-smells.py` - Automated smell detection
+- `scripts/analyze-complexity.py` —— 分析代码复杂度指标  
+- `scripts/detect-smells.py` —— 自动化异味检测  
 
-## Version History
+## 版本历史
 
-- v1.0.0 (2025-01-15): Initial release with Fowler methodology, phased approach, user consultation points
+- v1.0.0 (2025-01-15)：首版，含 Fowler 方法论、分阶段流程与用户确认节点  

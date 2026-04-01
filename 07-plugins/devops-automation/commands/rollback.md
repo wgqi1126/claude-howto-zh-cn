@@ -1,14 +1,14 @@
 ---
-name: Rollback
-description: Rollback to previous deployment
+name: 回滚
+description: 回滚到上一次部署
 ---
 
-# Rollback Deployment
+# 回滚部署
 
-Rollback to previous stable version:
+回滚到上一稳定版本：
 
-1. Identify previous deployment
-2. Verify rollback target is healthy
-3. Execute rollback procedure
-4. Run health checks
-5. Notify team
+1. 确定上一次部署
+2. 确认回滚目标健康
+3. 执行回滚流程
+4. 运行健康检查
+5. 通知团队

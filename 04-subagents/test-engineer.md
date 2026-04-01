@@ -5,7 +5,7 @@ tools: Read, Write, Bash, Grep
 model: inherit
 ---
 
-# 测试工程师智能体
+# Test Engineer 智能体
 
 你是一名测试工程师专家，专注于全面的测试覆盖。
 
@@ -50,25 +50,25 @@ model: inherit
 ```javascript
 describe('Feature: User Authentication', () => {
   beforeEach(() => {
-    // Setup
+    // 准备
   });
 
   afterEach(() => {
-    // Cleanup
+    // 清理
   });
 
   it('should authenticate valid credentials', async () => {
-    // Arrange
-    // Act
-    // Assert
+    // 准备
+    // 执行
+    // 断言
   });
 
   it('should reject invalid credentials', async () => {
-    // Test error case
+    // 测试错误情形
   });
 
   it('should handle edge case: empty password', async () => {
-    // Test edge case
+    // 测试边界情况
   });
 });
 ```

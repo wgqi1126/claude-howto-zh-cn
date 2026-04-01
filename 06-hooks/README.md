@@ -1,6 +1,6 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="../resources/logos/claude-howto-logo-dark.svg">
-  <img alt="Claude How To" src="../resources/logos/claude-howto-logo.svg">
+  <img alt="Claude How To 教程" src="../resources/logos/claude-howto-logo.svg">
 </picture>
 
 # Hooks
@@ -24,9 +24,9 @@ Hooks 在配置文件中按固定结构编写：
 - `~/.claude/settings.json` - 用户设置（所有项目）
 - `.claude/settings.json` - 项目设置（可分享、可提交）
 - `.claude/settings.local.json` - 本地项目设置（不提交）
-- 托管策略（Managed policy）- 组织级设置
+- 托管策略（组织托管）- 组织级设置
 - 插件 `hooks/hooks.json` - 插件作用域内的 hooks
-- Skill/Agent frontmatter - 组件生命周期内的 hooks
+- Skill 与 Agent 的 frontmatter - 组件生命周期内的 hooks
 
 ### 基本配置结构
 
@@ -39,7 +39,7 @@ Hooks 在配置文件中按固定结构编写：
         "hooks": [
           {
             "type": "command",
-            "command": "your-command-here",
+            "command": "在此处替换为你的命令",
             "timeout": 60
           }
         ]
@@ -73,7 +73,9 @@ Hooks 在配置文件中按固定结构编写：
 
 Claude Code 支持四种 hook 类型：
 
-### Command Hooks
+<a id="command-hooks"></a>
+
+### 命令型 Hooks（`command`）
 
 默认 hook 类型。执行 shell 命令，通过 JSON stdin/stdout 与退出码通信。
 
@@ -85,11 +87,13 @@ Claude Code 支持四种 hook 类型：
 }
 ```
 
-### HTTP Hooks
+<a id="http-hooks"></a>
+
+### HTTP 型 Hooks（`http`）
 
 > 自 v2.1.63 起提供。
 
-远程 webhook 端点，接收与 command hooks 相同的 JSON 输入。HTTP hooks 将 JSON POST 到 URL，并接收 JSON 响应。启用沙箱时，HTTP hooks 会经由沙箱路由。URL 中的环境变量插值需要显式配置 `allowedEnvVars` 列表以保证安全。
+远程 webhook 端点，接收与命令型 hooks 相同的 JSON 输入。HTTP hooks 将 JSON POST 到 URL，并接收 JSON 响应。启用沙箱时，HTTP hooks 会经由沙箱路由。URL 中的环境变量插值需要显式配置 `allowedEnvVars` 列表以保证安全。
 
 ```json
 {
@@ -109,28 +113,32 @@ Claude Code 支持四种 hook 类型：
 - 启用沙箱时经由沙箱路由
 - URL 中若使用环境变量插值，必须为相关变量提供显式 `allowedEnvVars` 列表
 
-### Prompt Hooks
+<a id="prompt-hooks"></a>
+
+### Prompt 型 Hooks（`prompt`）
 
 由 LLM 评估的提示词，hook 内容即待 Claude 评估的 prompt。主要用于 `Stop` 与 `SubagentStop` 事件，做智能的任务完成检查。
 
 ```json
 {
   "type": "prompt",
-  "prompt": "Evaluate if Claude completed all requested tasks.",
+  "prompt": "评估 Claude 是否已完成用户请求的全部任务。",
   "timeout": 30
 }
 ```
 
 LLM 会评估该 prompt 并返回结构化决策（详见 [基于 Prompt 的 Hooks](#prompt-based-hooks)）。
 
-### Agent Hooks
+<a id="agent-hooks"></a>
+
+### Agent 型 Hooks（`agent`）
 
 基于 subagent 的校验 hook，会启动专用 agent 来评估条件或执行复杂检查。与 prompt hooks（单轮 LLM 评估）不同，agent hooks 可以使用工具并进行多步推理。
 
 ```json
 {
   "type": "agent",
-  "prompt": "Verify the code changes follow our architecture guidelines. Check the relevant design docs and compare.",
+  "prompt": "核实代码变更是否符合我们的架构规范；查阅相关设计文档并对比。",
   "timeout": 120
 }
 ```
@@ -170,7 +178,7 @@ Claude Code 支持 **25 个 hook 事件**：
 | **WorktreeCreate** | 正在创建 worktree | （无） | 是（可返回路径） | Worktree 初始化 |
 | **WorktreeRemove** | 正在移除 worktree | （无） | 否 | Worktree 清理 |
 | **Elicitation** | MCP 服务器请求用户输入 | （无） | 是 | 输入校验 |
-| **ElicitationResult** | 用户响应 elicitation | （无） | 是 | 响应处理 |
+| **ElicitationResult** | 用户对征询（elicitation）的响应 | （无） | 是 | 响应处理 |
 | **SessionEnd** | 会话结束 | （无） | 否 | 清理、最终日志 |
 
 ### PreToolUse
@@ -272,7 +280,7 @@ Claude Code 支持 **25 个 hook 事件**：
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Evaluate if Claude completed all requested tasks.",
+            "prompt": "评估 Claude 是否已完成用户请求的全部任务。",
             "timeout": 30
           }
         ]
@@ -325,7 +333,7 @@ exit 0
 
 在会话结束时运行，用于清理或最终日志。无法阻止终止。
 
-**Reason 字段取值：**
+**结束原因（reason）取值：**
 - `clear` - 用户清空了会话
 - `logout` - 用户登出
 - `prompt_input_exit` - 用户通过提示输入退出
@@ -381,7 +389,7 @@ hooks:
 
 这样可直接在使用该 hook 的组件内定义，相关代码集中在一处。
 
-### Subagent frontmatter 中的 Hooks
+### Subagent 的 frontmatter 中的 Hooks
 
 若在 subagent 的 frontmatter 中定义 `Stop` hook，会自动转换为仅作用于该 subagent 的 `SubagentStop` hook，从而保证 stop hook 只在该 subagent 完成时触发，而非主会话停止时。
 
@@ -393,7 +401,7 @@ hooks:
   Stop:
     - hooks:
         - type: prompt
-          prompt: "Verify the code review is thorough and complete."
+          prompt: "确认代码审查是否充分、完整。"
   # 上述 Stop hook 会针对该 subagent 自动转换为 SubagentStop
 ---
 ```
@@ -409,7 +417,7 @@ hooks:
     "decision": {
       "behavior": "allow|deny",
       "updatedInput": {},
-      "message": "Custom message",
+      "message": "自定义提示信息",
       "interrupt": false
     }
   }
@@ -466,13 +474,13 @@ hooks:
 ```json
 {
   "continue": true,
-  "stopReason": "Optional message if stopping",
+  "stopReason": "若停止则在此填写原因",
   "suppressOutput": false,
-  "systemMessage": "Optional warning message",
+  "systemMessage": "可选的系统警告信息",
   "hookSpecificOutput": {
     "hookEventName": "PreToolUse",
     "permissionDecision": "allow",
-    "permissionDecisionReason": "File is in allowed directory",
+    "permissionDecisionReason": "文件位于允许的目录内",
     "updatedInput": {
       "file_path": "/modified/path.js"
     }
@@ -505,7 +513,7 @@ hooks:
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Review if all tasks are complete. Return your decision.",
+            "prompt": "检查是否所有任务均已完成，并给出你的判断。",
             "timeout": 30
           }
         ]
@@ -519,9 +527,9 @@ hooks:
 ```json
 {
   "decision": "approve",
-  "reason": "All tasks completed successfully",
+  "reason": "所有任务已成功完成",
   "continue": false,
-  "stopReason": "Task complete"
+  "stopReason": "任务已完成"
 }
 ```
 
@@ -538,8 +546,8 @@ import sys
 import re
 
 BLOCKED_PATTERNS = [
-    (r"\brm\s+-rf\s+/", "Blocking dangerous rm -rf / command"),
-    (r"\bsudo\s+rm", "Blocking sudo rm command"),
+    (r"\brm\s+-rf\s+/", "已拦截危险的 rm -rf / 命令"),
+    (r"\bsudo\s+rm", "已拦截 sudo rm 命令"),
 ]
 
 def main():
@@ -554,7 +562,7 @@ def main():
     for pattern, message in BLOCKED_PATTERNS:
         if re.search(pattern, command):
             print(message, file=sys.stderr)
-            sys.exit(2)  # Exit 2 = blocking error
+            sys.exit(2)  # 退出码 2 = 阻塞性错误
 
     sys.exit(0)
 
@@ -592,8 +600,8 @@ import sys
 import re
 
 SECRET_PATTERNS = [
-    (r"password\s*=\s*['\"][^'\"]+['\"]", "Potential hardcoded password"),
-    (r"api[_-]?key\s*=\s*['\"][^'\"]+['\"]", "Potential hardcoded API key"),
+    (r"password\s*=\s*['\"][^'\"]+['\"]", "疑似硬编码密码"),
+    (r"api[_-]?key\s*=\s*['\"][^'\"]+['\"]", "疑似硬编码 API 密钥"),
 ]
 
 def main():
@@ -616,7 +624,7 @@ def main():
         output = {
             "hookSpecificOutput": {
                 "hookEventName": "PostToolUse",
-                "additionalContext": f"Security warnings for {file_path}: " + "; ".join(warnings)
+                "additionalContext": f"{file_path} 的安全警告：" + "；".join(warnings)
             }
         }
         print(json.dumps(output))
@@ -670,8 +678,8 @@ import sys
 import re
 
 BLOCKED_PATTERNS = [
-    (r"delete\s+(all\s+)?database", "Dangerous: database deletion"),
-    (r"rm\s+-rf\s+/", "Dangerous: root deletion"),
+    (r"delete\s+(all\s+)?database", "危险：删除数据库"),
+    (r"rm\s+-rf\s+/", "危险：删除根目录"),
 ]
 
 def main():
@@ -682,7 +690,7 @@ def main():
         if re.search(pattern, prompt, re.IGNORECASE):
             output = {
                 "decision": "block",
-                "reason": f"Blocked: {message}"
+                "reason": f"已拦截：{message}"
             }
             print(json.dumps(output))
             sys.exit(0)
@@ -703,7 +711,7 @@ if __name__ == "__main__":
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Review if Claude completed all requested tasks. Check: 1) Were all files created/modified? 2) Were there unresolved errors? If incomplete, explain what's missing.",
+            "prompt": "检查 Claude 是否完成了用户请求的全部任务。请核对：1）所需文件是否均已创建或修改？2）是否仍有未解决的错误？若未完成，请说明缺了什么。",
             "timeout": 30
           }
         ]
@@ -722,36 +730,36 @@ if __name__ == "__main__":
 ```python
 #!/usr/bin/env python3
 """
-Context Usage Tracker - Tracks token consumption per request.
+上下文用量追踪：按每次请求统计 token 消耗。
 
-Uses UserPromptSubmit as "pre-message" hook and Stop as "post-response" hook
-to calculate the delta in token usage for each request.
+将 UserPromptSubmit 作为「消息前」hook、Stop 作为「回复后」hook，
+计算单次请求的 token 用量增量。
 
-Token Counting Methods:
-1. Character estimation (default): ~4 chars per token, no dependencies
-2. tiktoken (optional): More accurate (~90-95%), requires: pip install tiktoken
+计数方式：
+1. 字符估算（默认）：约每 4 个字符折合 1 token，无额外依赖
+2. tiktoken（可选）：更准（约 90–95%），需执行：pip install tiktoken
 """
 import json
 import os
 import sys
 import tempfile
 
-# Configuration
-CONTEXT_LIMIT = 128000  # Claude's context window (adjust for your model)
-USE_TIKTOKEN = False    # Set True if tiktoken is installed for better accuracy
+# 配置
+CONTEXT_LIMIT = 128000  # Claude 上下文窗口上限（可按所用模型调整）
+USE_TIKTOKEN = False    # 若已安装 tiktoken 可改为 True 以提高准确度
 
 
 def get_state_file(session_id: str) -> str:
-    """Get temp file path for storing pre-message token count, isolated by session."""
+    """返回用于保存「消息前」token 计数的临时文件路径，按 session 隔离。"""
     return os.path.join(tempfile.gettempdir(), f"claude-context-{session_id}.json")
 
 
 def count_tokens(text: str) -> int:
     """
-    Count tokens in text.
+    统计文本中的 token 数。
 
-    Uses tiktoken with p50k_base encoding if available (~90-95% accuracy),
-    otherwise falls back to character estimation (~80-90% accuracy).
+    若可用则使用 tiktoken 的 p50k_base 编码（约 90–95% 准确度），
+    否则回退为字符估算（约 80–90% 准确度）。
     """
     if USE_TIKTOKEN:
         try:
@@ -759,14 +767,14 @@ def count_tokens(text: str) -> int:
             enc = tiktoken.get_encoding("p50k_base")
             return len(enc.encode(text))
         except ImportError:
-            pass  # Fall back to estimation
+            pass  # 回退到估算
 
-    # Character-based estimation: ~4 characters per token for English
+    # 按字符估算：英文约每 4 个字符 1 token
     return len(text) // 4
 
 
 def read_transcript(transcript_path: str) -> str:
-    """Read and concatenate all content from transcript file."""
+    """读取 transcript 文件并拼接全部文本内容。"""
     if not transcript_path or not os.path.exists(transcript_path):
         return ""
 
@@ -775,7 +783,7 @@ def read_transcript(transcript_path: str) -> str:
         for line in f:
             try:
                 entry = json.loads(line.strip())
-                # Extract text content from various message formats
+                # 从多种消息格式中提取文本
                 if "message" in entry:
                     msg = entry["message"]
                     if isinstance(msg.get("content"), str):
@@ -791,28 +799,28 @@ def read_transcript(transcript_path: str) -> str:
 
 
 def handle_user_prompt_submit(data: dict) -> None:
-    """Pre-message hook: Save current token count before request."""
+    """消息前 hook：在请求发出前保存当前 token 计数。"""
     session_id = data.get("session_id", "unknown")
     transcript_path = data.get("transcript_path", "")
 
     transcript_content = read_transcript(transcript_path)
     current_tokens = count_tokens(transcript_content)
 
-    # Save to temp file for later comparison
+    # 写入临时文件供后续对比
     state_file = get_state_file(session_id)
     with open(state_file, "w") as f:
         json.dump({"pre_tokens": current_tokens}, f)
 
 
 def handle_stop(data: dict) -> None:
-    """Post-response hook: Calculate and report token delta."""
+    """回复后 hook：计算并输出 token 增量。"""
     session_id = data.get("session_id", "unknown")
     transcript_path = data.get("transcript_path", "")
 
     transcript_content = read_transcript(transcript_path)
     current_tokens = count_tokens(transcript_content)
 
-    # Load pre-message count
+    # 读取消息前计数
     state_file = get_state_file(session_id)
     pre_tokens = 0
     if os.path.exists(state_file):
@@ -823,16 +831,19 @@ def handle_stop(data: dict) -> None:
         except (json.JSONDecodeError, IOError):
             pass
 
-    # Calculate delta
+    # 计算增量
     delta_tokens = current_tokens - pre_tokens
     remaining = CONTEXT_LIMIT - current_tokens
     percentage = (current_tokens / CONTEXT_LIMIT) * 100
 
-    # Report usage
-    method = "tiktoken" if USE_TIKTOKEN else "estimated"
-    print(f"Context ({method}): ~{current_tokens:,} tokens ({percentage:.1f}% used, ~{remaining:,} remaining)", file=sys.stderr)
+    # 输出用量
+    method_label = "tiktoken" if USE_TIKTOKEN else "估算"
+    print(
+        f"上下文（{method_label}）：约 {current_tokens:,} 个 token（已用 {percentage:.1f}%，约剩余 {remaining:,}）",
+        file=sys.stderr,
+    )
     if delta_tokens > 0:
-        print(f"This request: ~{delta_tokens:,} tokens", file=sys.stderr)
+        print(f"本次请求：约 {delta_tokens:,} 个 token", file=sys.stderr)
 
 
 def main():
@@ -967,7 +978,7 @@ MCP 工具遵循模式 `mcp__<server>__<tool>`：
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"systemMessage\": \"Memory operation logged\"}'"
+            "command": "echo '{\"systemMessage\": \"已记录 Memory 操作\"}'"
           }
         ]
       }
@@ -1088,7 +1099,7 @@ echo $?
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Verify all tasks are complete before stopping.",
+            "prompt": "在结束前请确认所有任务均已完成。",
             "timeout": 30
           }
         ]

@@ -178,11 +178,11 @@ claude mcp add --transport http my-service https://my-service.example.com/mcp \
 URL 必须使用 `https://`。此选项需要 Claude Code v2.1.64 或更高版本。
 
 <a id="claudeai-mcp-connectors"></a>
-### Claude.ai MCP Connectors
+### Claude.ai MCP 连接器
 
 在 Claude.ai 账号中配置的 MCP 服务器会自动出现在 Claude Code 中。也就是说，通过 Claude.ai 网页界面建立的 MCP 连接无需额外配置即可使用。
 
-Claude.ai MCP connectors 在 `--print` 模式下也可用（v2.1.83+），便于非交互与脚本化使用。
+Claude.ai MCP 连接器在 `--print` 模式下也可用（v2.1.83+），便于非交互与脚本化使用。
 
 若要在 Claude Code 中禁用 Claude.ai 的 MCP 服务器，请将环境变量 `ENABLE_CLAUDEAI_MCP_SERVERS` 设为 `false`：
 
@@ -385,11 +385,11 @@ claude mcp add-from-claude-desktop
 /mcp__github__get_pr 456
 
 # 返回：
-Title: Add dark mode support
-Author: @alice
-Description: Implements dark theme using CSS variables
-Status: OPEN
-Reviewers: @bob, @charlie
+标题：添加深色模式支持
+作者：@alice
+描述：使用 CSS 变量实现深色主题
+状态：OPEN
+评审人：@bob、@charlie
 ```
 
 <a id="issue-management"></a>
@@ -486,15 +486,15 @@ HAVING COUNT(o.id) > 10
 ORDER BY order_count DESC;
 
 # 结果：
-- Alice: 15 orders
-- Bob: 12 orders
-- Charlie: 11 orders
+- Alice：15 笔订单
+- Bob：12 笔订单
+- Charlie：11 笔订单
 ```
 
 **配置：**
 ```bash
 export DATABASE_URL="postgresql://user:pass@localhost/mydb"
-# Or use the CLI to add directly:
+# 或直接使用 CLI 添加：
 claude mcp add --transport stdio database -- npx @modelcontextprotocol/server-database
 ```
 
@@ -504,46 +504,46 @@ claude mcp add --transport stdio database -- npx @modelcontextprotocol/server-da
 **场景：每日报告生成**
 
 ```markdown
-# Daily Report Workflow using Multiple MCPs
+# 使用多个 MCP 的每日报告工作流
 
-## Setup
-1. GitHub MCP - fetch PR metrics
-2. Database MCP - query sales data
-3. Slack MCP - post report
-4. Filesystem MCP - save report
+## 准备
+1. GitHub MCP — 拉取 PR 指标
+2. Database MCP — 查询销售数据
+3. Slack MCP — 发布报告
+4. Filesystem MCP — 保存报告
 
-## Workflow
+## 工作流
 
-### Step 1: Fetch GitHub Data
+### 步骤 1：拉取 GitHub 数据
 /mcp__github__list_prs completed:true last:7days
 
-Output:
-- Total PRs: 42
-- Average merge time: 2.3 hours
-- Review turnaround: 1.1 hours
+输出：
+- PR 总数：42
+- 平均合并时间：2.3 小时
+- 评审周转：1.1 小时
 
-### Step 2: Query Database
+### 步骤 2：查询数据库
 SELECT COUNT(*) as sales, SUM(amount) as revenue
 FROM orders
 WHERE created_at > NOW() - INTERVAL '1 day'
 
-Output:
-- Sales: 247
-- Revenue: $12,450
+输出：
+- 销售额：247
+- 收入：$12,450
 
-### Step 3: Generate Report
-Combine data into HTML report
+### 步骤 3：生成报告
+将数据合并为 HTML 报告
 
-### Step 4: Save to Filesystem
-Write report.html to /reports/
+### 步骤 4：保存到文件系统
+将 report.html 写入 /reports/
 
-### Step 5: Post to Slack
-Send summary to #daily-reports channel
+### 步骤 5：发布到 Slack
+将摘要发送到 #daily-reports 频道
 
-Final Output:
-✅ Report generated and posted
-📊 47 PRs merged this week
-💰 $12,450 in daily sales
+最终输出：
+✅ 报告已生成并发布
+📊 本周已合并 47 个 PR
+💰 当日销售额 $12,450
 ```
 
 **配置：**
@@ -551,7 +551,7 @@ Final Output:
 export GITHUB_TOKEN="your_github_token"
 export DATABASE_URL="postgresql://user:pass@localhost/mydb"
 export SLACK_TOKEN="your_slack_token"
-# Add each MCP server via the CLI or configure them in .mcp.json
+# 通过 CLI 逐个添加 MCP 服务器，或在 .mcp.json 中配置
 ```
 
 <a id="example-4-filesystem-mcp-operations"></a>
@@ -574,16 +574,16 @@ export SLACK_TOKEN="your_slack_token"
 
 | 操作 | 命令 | 用途 |
 |-----------|---------|---------|
-| List files | `ls ~/projects` | 显示目录内容 |
-| Read file | `cat src/main.ts` | 读取文件内容 |
-| Write file | `create docs/api.md` | 创建新文件 |
-| Edit file | `edit src/app.ts` | 修改文件 |
-| Search | `grep "async function"` | 在文件中搜索 |
-| Delete | `rm old-file.js` | 删除文件 |
+| 列出文件 | `ls ~/projects` | 显示目录内容 |
+| 读取文件 | `cat src/main.ts` | 读取文件内容 |
+| 写入文件 | `create docs/api.md` | 创建新文件 |
+| 编辑文件 | `edit src/app.ts` | 修改文件 |
+| 搜索 | `grep "async function"` | 在文件中搜索 |
+| 删除 | `rm old-file.js` | 删除文件 |
 
 **配置：**
 ```bash
-# Use the CLI to add directly:
+# 直接使用 CLI 添加：
 claude mcp add --transport stdio filesystem -- npx @modelcontextprotocol/server-filesystem /home/user/projects
 ```
 
@@ -592,14 +592,14 @@ claude mcp add --transport stdio filesystem -- npx @modelcontextprotocol/server-
 
 ```mermaid
 graph TD
-    A["Need external data?"]
-    A -->|No| B["Use Memory"]
-    A -->|Yes| C["Does it change frequently?"]
-    C -->|No/Rarely| B
-    C -->|Yes/Often| D["Use MCP"]
+    A["需要外部数据？"]
+    A -->|否| B["使用 Memory"]
+    A -->|是| C["数据是否频繁变化？"]
+    C -->|否/很少| B
+    C -->|是/经常| D["使用 MCP"]
 
-    B -->|Stores| E["Preferences<br/>Context<br/>History"]
-    D -->|Accesses| F["Live APIs<br/>Databases<br/>Services"]
+    B -->|存储| E["偏好<br/>上下文<br/>历史"]
+    D -->|访问| F["实时 API<br/>数据库<br/>服务"]
 
     style A fill:#fff3e0,stroke:#333,color:#333
     style B fill:#e1f5fe,stroke:#333,color:#333
@@ -615,17 +615,17 @@ graph TD
 ```mermaid
 sequenceDiagram
     participant App as Claude
-    participant MCP as MCP Server
-    participant DB as Database
+    participant MCP as MCP 服务器
+    participant DB as 数据库
 
-    App->>MCP: Request: "SELECT * FROM users WHERE id=1"
-    MCP->>DB: Execute query
-    DB-->>MCP: Result set
-    MCP-->>App: Return parsed data
-    App->>App: Process result
-    App->>App: Continue task
+    App->>MCP: 请求："SELECT * FROM users WHERE id=1"
+    MCP->>DB: 执行查询
+    DB-->>MCP: 结果集
+    MCP-->>App: 返回解析后的数据
+    App->>App: 处理结果
+    App->>App: 继续任务
 
-    Note over MCP,DB: Real-time access<br/>No caching
+    Note over MCP,DB: 实时访问<br/>无缓存
 ```
 
 <a id="environment-variables"></a>
@@ -634,7 +634,7 @@ sequenceDiagram
 将敏感凭据放在环境变量中：
 
 ```bash
-# ~/.bashrc or ~/.zshrc
+# ~/.bashrc 或 ~/.zshrc
 export GITHUB_TOKEN="ghp_xxxxxxxxxxxxx"
 export DATABASE_URL="postgresql://user:pass@localhost/mydb"
 export SLACK_TOKEN="xoxb-xxxxxxxxxxxxx"
@@ -656,7 +656,7 @@ export SLACK_TOKEN="xoxb-xxxxxxxxxxxxx"
 Claude Code 自身也可作为 MCP 服务器供其他应用使用。这样外部工具、编辑器与自动化系统可通过标准 MCP 协议使用 Claude 的能力。
 
 ```bash
-# Start Claude Code as an MCP server on stdio
+# 将 Claude Code 作为基于 stdio 的 MCP 服务器启动
 claude mcp serve
 ```
 
@@ -749,7 +749,7 @@ mcpServers:
     url: https://my-tool.example.com/mcp
 ---
 
-You are an agent with access to my-tool for specialized operations.
+你是一个可访问 my-tool 以执行专项操作的智能体。
 ```
 
 Subagent 作用域内的 MCP 服务器仅在该智能体的执行上下文中可用，不会与父级或同级智能体共享。
@@ -768,7 +768,7 @@ Claude Code 对 MCP 工具输出设有限制，以防上下文溢出：
 可通过环境变量 `MAX_MCP_OUTPUT_TOKENS` 配置最大输出上限：
 
 ```bash
-# Increase the max output to 50,000 tokens
+# 将最大输出提高到 50,000 tokens
 export MAX_MCP_OUTPUT_TOKENS=50000
 ```
 
@@ -777,7 +777,7 @@ export MAX_MCP_OUTPUT_TOKENS=50000
 
 随着 MCP 普及，连接数十个服务器与成百上千个工具会带来严峻挑战：**上下文膨胀**。这可以说是大规模使用 MCP 时的首要问题，Anthropic 工程团队提出了一种思路——用代码执行替代直接工具调用。
 
-> **来源**：[Code Execution with MCP: Building More Efficient Agents](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic 工程博客
+> **来源**：[MCP 代码执行：构建更高效的智能体](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic 工程博客
 
 <a id="the-problem-two-sources-of-token-waste"></a>
 ### 问题：两类 token 浪费
@@ -792,10 +792,10 @@ export MAX_MCP_OUTPUT_TOKENS=50000
 
 ```mermaid
 graph LR
-    A["Model"] -->|"Tool Call: getDocument"| B["MCP Server"]
-    B -->|"Full transcript (50K tokens)"| A
-    A -->|"Tool Call: updateRecord<br/>(re-sends full transcript)"| B
-    B -->|"Confirmation"| A
+    A["模型"] -->|"工具调用：getDocument"| B["MCP 服务器"]
+    B -->|"完整逐字稿（50K tokens）"| A
+    A -->|"工具调用：updateRecord<br/>（再次发送完整逐字稿）"| B
+    B -->|"确认"| A
 
     style A fill:#ffcdd2,stroke:#333,color:#333
     style B fill:#f3e5f5,stroke:#333,color:#333
@@ -808,10 +808,10 @@ graph LR
 
 ```mermaid
 graph LR
-    A["Model"] -->|"Writes code"| B["Code Execution<br/>Environment"]
-    B -->|"Calls tools directly"| C["MCP Servers"]
-    C -->|"Data stays in<br/>execution env"| B
-    B -->|"Only final result<br/>(minimal tokens)"| A
+    A["模型"] -->|"编写代码"| B["代码执行<br/>环境"]
+    B -->|"直接调用工具"| C["MCP 服务器"]
+    C -->|"数据留在<br/>执行环境"| B
+    B -->|"仅最终结果<br/>（极少 tokens）"| A
 
     style A fill:#c8e6c9,stroke:#333,color:#333
     style B fill:#e1f5fe,stroke:#333,color:#333
@@ -863,7 +863,7 @@ export async function getDocument(
 import * as gdrive from './servers/google-drive';
 import * as salesforce from './servers/salesforce';
 
-// Data flows directly between tools — never through the model
+// 数据在工具之间直接流动 — 不经过模型
 const transcript = (
   await gdrive.getDocument({ documentId: 'abc123' })
 ).content;
@@ -892,24 +892,24 @@ await salesforce.updateRecord({
 #### 示例：过滤大数据集
 
 ```typescript
-// Without code execution — all 10,000 rows flow through context
-// TOOL CALL: gdrive.getSheet(sheetId: 'abc123')
-//   -> returns 10,000 rows in context
+// 无代码执行 — 全部 10,000 行流经上下文
+// 工具调用：gdrive.getSheet(sheetId: 'abc123')
+//   -> 在上下文中返回 10,000 行
 
-// With code execution — filter in the execution environment
+// 有代码执行 — 在执行环境中过滤
 const allRows = await gdrive.getSheet({ sheetId: 'abc123' });
 const pendingOrders = allRows.filter(
   row => row["Status"] === 'pending'
 );
-console.log(`Found ${pendingOrders.length} pending orders`);
-console.log(pendingOrders.slice(0, 5)); // Only 5 rows reach the model
+console.log(`找到 ${pendingOrders.length} 笔待处理订单`);
+console.log(pendingOrders.slice(0, 5)); // 仅 5 行进入模型上下文
 ```
 
 <a id="example-loop-without-round-tripping"></a>
 #### 示例：无往返轮询的循环
 
 ```typescript
-// Poll for a deployment notification — runs entirely in code
+// 轮询部署通知 — 完全在代码中运行
 let found = false;
 while (!found) {
   const messages = await slack.getChannelHistory({
@@ -920,7 +920,7 @@ while (!found) {
   );
   if (!found) await new Promise(r => setTimeout(r, 5000));
 }
-console.log('Deployment notification received');
+console.log('已收到部署通知');
 ```
 
 <a id="trade-offs-to-consider"></a>
@@ -954,9 +954,9 @@ console.log('Deployment notification received');
 **安装：**
 
 ```bash
-npx mcporter list          # No install required — discover servers instantly
-pnpm add mcporter          # Add to a project
-brew install steipete/tap/mcporter  # macOS via Homebrew
+npx mcporter list          # 无需安装 — 即时发现服务器
+pnpm add mcporter          # 添加到项目
+brew install steipete/tap/mcporter  # macOS 通过 Homebrew
 ```
 
 **示例 — 在 TypeScript 中组合工具：**
@@ -968,7 +968,7 @@ const runtime = await createRuntime();
 const gdrive = createServerProxy(runtime, "google-drive");
 const salesforce = createServerProxy(runtime, "salesforce");
 
-// Data flows between tools without passing through the model context
+// 数据在工具之间流动，不经过模型上下文
 const doc = await gdrive.getDocument({ documentId: "abc123" });
 await salesforce.updateRecord({
   objectType: "SalesMeeting",
@@ -980,10 +980,10 @@ await salesforce.updateRecord({
 **示例 — CLI 工具调用：**
 
 ```bash
-# Call a specific tool directly
-npx mcporter call linear.create_comment issueId:ENG-123 body:'Looks good!'
+# 直接调用指定工具
+npx mcporter call linear.create_comment issueId:ENG-123 body:'看起来不错！'
 
-# List available servers and tools
+# 列出可用服务器与工具
 npx mcporter list
 ```
 
@@ -1116,24 +1116,24 @@ npm install -g @modelcontextprotocol/server-slack
 <a id="mcp-server-not-found"></a>
 ### 找不到 MCP 服务器
 ```bash
-# Verify MCP server is installed
+# 确认已安装 MCP 服务器
 npm list -g @modelcontextprotocol/server-github
 
-# Install if missing
+# 若缺失则安装
 npm install -g @modelcontextprotocol/server-github
 ```
 
 <a id="authentication-failed"></a>
 ### 认证失败
 ```bash
-# Verify environment variable is set
+# 确认环境变量已设置
 echo $GITHUB_TOKEN
 
-# Re-export if needed
+# 需要时重新 export
 export GITHUB_TOKEN="your_token"
 
-# Verify token has correct permissions
-# Check GitHub token scopes at: https://github.com/settings/tokens
+# 确认 token 权限正确
+# 在以下页面检查 GitHub token 权限范围：https://github.com/settings/tokens
 ```
 
 <a id="connection-timeout"></a>
@@ -1174,11 +1174,11 @@ export GITHUB_TOKEN="your_token"
 <a id="additional-resources"></a>
 ## 延伸阅读
 
-- [Official MCP Documentation](https://code.claude.com/docs/en/mcp)
-- [MCP Protocol Specification](https://modelcontextprotocol.io/specification)
-- [MCP GitHub Repository](https://github.com/modelcontextprotocol/servers)
-- [Available MCP Servers](https://github.com/modelcontextprotocol/servers)
+- [MCP 官方文档](https://code.claude.com/docs/en/mcp)
+- [MCP 协议规范](https://modelcontextprotocol.io/specification)
+- [MCP GitHub 仓库](https://github.com/modelcontextprotocol/servers)
+- [可用的 MCP 服务器](https://github.com/modelcontextprotocol/servers)
 - [MCPorter](https://github.com/steipete/mcporter) — 以 TypeScript 运行时与 CLI 无样板调用 MCP 服务器
-- [Code Execution with MCP](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic 关于缓解上下文膨胀的工程博客
-- [Claude Code CLI Reference](https://code.claude.com/docs/en/cli-reference)
-- [Claude API Documentation](https://docs.anthropic.com)
+- [MCP 代码执行](https://www.anthropic.com/engineering/code-execution-with-mcp) — Anthropic 关于缓解上下文膨胀的工程博客
+- [Claude Code CLI 参考](https://code.claude.com/docs/en/cli-reference)
+- [Claude API 文档](https://docs.anthropic.com)

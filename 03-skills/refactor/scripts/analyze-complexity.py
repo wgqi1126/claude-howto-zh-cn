@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-Code Complexity Analyzer
+代码复杂度分析器
 
-Analyzes code complexity metrics for Python, JavaScript, and TypeScript files.
-Helps measure the impact of refactoring by comparing before/after metrics.
+分析 Python、JavaScript 与 TypeScript 文件的代码复杂度指标。
+通过对比重构前后的指标，帮助衡量重构带来的影响。
 
-Usage:
+用法:
     python analyze-complexity.py <file>
-    python analyze-complexity.py <before_file> <after_file>  # Compare mode
-    python analyze-complexity.py --dir <directory>           # Analyze directory
+    python analyze-complexity.py <before_file> <after_file>  # 对比模式
+    python analyze-complexity.py --dir <directory>           # 分析目录
 
-Metrics:
-    - Cyclomatic Complexity: Decision points in code
-    - Cognitive Complexity: How hard is it to understand
-    - Maintainability Index: Overall maintainability score (0-100)
-    - Lines of Code: Total lines
-    - Function Count: Number of functions/methods
-    - Average Function Length: Lines per function
+指标:
+    - 圈复杂度（Cyclomatic Complexity）：代码中的决策点数量
+    - 认知复杂度（Cognitive Complexity）：理解代码的难度
+    - 可维护性指数（Maintainability Index）：综合可维护性得分（0–100）
+    - 代码行数：总行数
+    - 函数数量：函数/方法个数
+    - 平均函数长度：每个函数的平均行数
 """
 
 import argparse
@@ -30,7 +30,7 @@ from typing import Dict, List, Optional
 
 @dataclass
 class FunctionMetrics:
-    """Metrics for a single function."""
+    """单个函数的指标。"""
     name: str
     start_line: int
     end_line: int
@@ -42,7 +42,7 @@ class FunctionMetrics:
 
 @dataclass
 class FileMetrics:
-    """Metrics for a file."""
+    """单个文件的指标。"""
     filename: str
     lines_of_code: int
     blank_lines: int
@@ -58,9 +58,9 @@ class FileMetrics:
 
 
 class ComplexityAnalyzer:
-    """Analyze code complexity for multiple languages."""
+    """针对多种语言分析代码复杂度。"""
 
-    # Patterns for different languages
+    # 各语言对应的模式
     PATTERNS = {
         'python': {
             'function': r'^\s*def\s+(\w+)\s*\(',
@@ -105,7 +105,7 @@ class ComplexityAnalyzer:
         self.lines = self.code.split('\n')
 
     def _detect_language(self) -> str:
-        """Detect programming language from file extension."""
+        """根据文件扩展名检测编程语言。"""
         ext = os.path.splitext(self.filepath)[1].lower()
         ext_map = {
             '.py': 'python',
@@ -118,14 +118,14 @@ class ComplexityAnalyzer:
 
     def calculate_cyclomatic_complexity(self, code: Optional[str] = None) -> int:
         """
-        Calculate cyclomatic complexity using McCabe's method.
-        CC = E - N + 2P where E=edges, N=nodes, P=connected components
-        Simplified: Count decision points + 1
+        使用 McCabe 方法计算圈复杂度。
+        CC = E - N + 2P，其中 E=边数，N=节点数，P=连通分量数。
+        简化实现：统计决策点数量 + 1。
         """
         if code is None:
             code = self.code
 
-        complexity = 1  # Base complexity
+        complexity = 1  # 基础复杂度
 
         for pattern in self.patterns['decision']:
             matches = re.findall(pattern, code)
@@ -135,9 +135,9 @@ class ComplexityAnalyzer:
 
     def calculate_cognitive_complexity(self, code: Optional[str] = None) -> int:
         """
-        Calculate cognitive complexity.
-        Measures how hard it is to understand the code.
-        Accounts for nesting depth and control flow breaks.
+        计算认知复杂度。
+        衡量理解代码的难度。
+        会考虑嵌套深度与控制流跳转。
         """
         if code is None:
             code = self.code
@@ -150,66 +150,66 @@ class ComplexityAnalyzer:
         for line in lines:
             stripped = line.strip()
 
-            # Track function boundaries
+            # 跟踪函数边界
             if re.search(self.patterns['function'], line):
                 in_function = True
                 nesting_depth = 0
 
-            # Increment for control flow structures
+            # 控制流结构累加
             if re.search(r'\b(if|for|while|switch)\b', stripped):
                 nesting_depth += 1
-                cognitive += nesting_depth  # Nested structures cost more
+                cognitive += nesting_depth  # 嵌套越深代价越高
 
             elif re.search(r'\b(elif|else if|else|catch|finally)\b', stripped):
-                cognitive += nesting_depth  # Same level as parent
+                cognitive += nesting_depth  # 与父级同层
 
-            # Track nesting through braces/indentation
+            # 通过花括号/缩进跟踪嵌套
             if self.language in ['javascript', 'typescript']:
                 nesting_depth += stripped.count('{') - stripped.count('}')
                 nesting_depth = max(0, nesting_depth)
 
-            # Bonus for breaks in linear flow
+            # 线性流程被 break/continue/return/throw 打断时的额外代价
             if re.search(r'\b(break|continue|return|throw)\b', stripped):
                 if nesting_depth > 1:
                     cognitive += 1
 
-            # Bonus for recursion
-            # (simplified: just look for function calling itself)
+            # 递归的额外代价
+            #（简化：仅查找函数调用自身的情况）
 
         return cognitive
 
     def calculate_maintainability_index(self) -> float:
         """
-        Calculate Maintainability Index (0-100).
-        Based on Halstead Volume, Cyclomatic Complexity, and Lines of Code.
+        计算可维护性指数（0–100）。
+        基于 Halstead 体量、圈复杂度与代码行数。
 
         MI = max(0, (171 - 5.2*ln(V) - 0.23*CC - 16.2*ln(LOC)) * 100/171)
 
-        Interpretation:
-        - 85-100: Highly maintainable
-        - 65-84: Moderately maintainable
-        - 50-64: Difficult to maintain
-        - 0-49: Very difficult to maintain
+        解读:
+        - 85–100：极易维护
+        - 65–84：中等可维护
+        - 50–64：较难维护
+        - 0–49：很难维护
         """
         import math
 
         loc = len([l for l in self.lines if l.strip()])
         cc = self.calculate_cyclomatic_complexity()
 
-        # Simplified Halstead Volume approximation
-        # Count unique operators and operands
+        # 简化的 Halstead 体量近似
+        # 统计唯一运算符与操作数
         operators = len(re.findall(r'[+\-*/%=<>!&|^~]', self.code))
         operands = len(re.findall(r'\b\w+\b', self.code))
         volume = (operators + operands) * math.log2(max(1, operators + operands))
 
-        # Calculate MI
+        # 计算 MI
         mi = 171 - 5.2 * math.log(max(1, volume)) - 0.23 * cc - 16.2 * math.log(max(1, loc))
         mi = max(0, min(100, mi * 100 / 171))
 
         return round(mi, 2)
 
     def count_lines(self) -> Dict[str, int]:
-        """Count different types of lines."""
+        """统计各类行的数量。"""
         total = len(self.lines)
         blank = 0
         comment = 0
@@ -218,7 +218,7 @@ class ComplexityAnalyzer:
         for line in self.lines:
             stripped = line.strip()
 
-            # Check for multiline comments
+            # 多行注释
             if re.search(self.patterns['multiline_comment_start'], stripped):
                 in_multiline_comment = True
             if re.search(self.patterns['multiline_comment_end'], stripped):
@@ -241,17 +241,17 @@ class ComplexityAnalyzer:
         }
 
     def find_functions(self) -> List[FunctionMetrics]:
-        """Find all functions and calculate their individual metrics."""
+        """查找所有函数并计算各自的指标。"""
         functions = []
         current_function = None
         function_start = 0
         brace_depth = 0
 
         for i, line in enumerate(self.lines):
-            # Check for function definition
+            # 函数定义
             match = re.search(self.patterns['function'], line)
             if match:
-                # Save previous function if exists
+                # 若存在则保存上一个函数
                 if current_function:
                     func_code = '\n'.join(self.lines[function_start:i])
                     functions.append(self._create_function_metrics(
@@ -262,11 +262,11 @@ class ComplexityAnalyzer:
                 function_start = i
                 brace_depth = 0
 
-            # Track braces for JS/TS
+            # JS/TS 花括号跟踪
             if self.language in ['javascript', 'typescript']:
                 brace_depth += line.count('{') - line.count('}')
 
-        # Don't forget the last function
+        # 勿遗漏最后一个函数
         if current_function:
             func_code = '\n'.join(self.lines[function_start:])
             functions.append(self._create_function_metrics(
@@ -276,10 +276,10 @@ class ComplexityAnalyzer:
         return functions
 
     def _create_function_metrics(self, name: str, start: int, end: int, code: str) -> FunctionMetrics:
-        """Create metrics for a single function."""
+        """为单个函数构造指标。"""
         lines = end - start + 1
 
-        # Count parameters (simplified)
+        # 参数个数（简化统计）
         param_match = re.search(r'\(([^)]*)\)', code.split('\n')[0])
         param_count = 0
         if param_match and param_match.group(1).strip():
@@ -296,14 +296,14 @@ class ComplexityAnalyzer:
         )
 
     def analyze(self) -> FileMetrics:
-        """Perform complete analysis of the file."""
+        """对文件执行完整分析。"""
         line_counts = self.count_lines()
         functions = self.find_functions()
 
-        # Count classes
+        # 类数量
         class_count = len(re.findall(self.patterns['class'], self.code))
 
-        # Calculate averages
+        # 平均值
         func_lengths = [f.lines for f in functions] if functions else [0]
         avg_func_length = sum(func_lengths) / len(func_lengths)
         max_func_length = max(func_lengths)
@@ -325,61 +325,61 @@ class ComplexityAnalyzer:
 
 
 def print_metrics(metrics: FileMetrics, verbose: bool = False) -> None:
-    """Print metrics in a readable format."""
+    """以可读格式打印指标。"""
     print("=" * 60)
-    print(f"CODE COMPLEXITY ANALYSIS: {metrics.filename}")
+    print(f"代码复杂度分析: {metrics.filename}")
     print("=" * 60)
 
-    print("\n📊 OVERVIEW")
+    print("\n📊 概览")
     print("-" * 40)
-    print(f"  Lines of Code:          {metrics.lines_of_code}")
-    print(f"  Blank Lines:            {metrics.blank_lines}")
-    print(f"  Comment Lines:          {metrics.comment_lines}")
-    print(f"  Functions/Methods:      {metrics.function_count}")
-    print(f"  Classes:                {metrics.class_count}")
+    print(f"  代码行数:                {metrics.lines_of_code}")
+    print(f"  空行:                    {metrics.blank_lines}")
+    print(f"  注释行:                  {metrics.comment_lines}")
+    print(f"  函数/方法:               {metrics.function_count}")
+    print(f"  类:                      {metrics.class_count}")
 
-    print("\n📈 COMPLEXITY METRICS")
+    print("\n📈 复杂度指标")
     print("-" * 40)
-    print(f"  Cyclomatic Complexity:  {metrics.cyclomatic_complexity}")
-    print(f"  Cognitive Complexity:   {metrics.cognitive_complexity}")
-    print(f"  Maintainability Index:  {metrics.maintainability_index}")
+    print(f"  圈复杂度:                {metrics.cyclomatic_complexity}")
+    print(f"  认知复杂度:              {metrics.cognitive_complexity}")
+    print(f"  可维护性指数:            {metrics.maintainability_index}")
 
-    # Interpret maintainability
+    # 可维护性解读
     mi = metrics.maintainability_index
     if mi >= 85:
-        mi_label = "Highly maintainable ✅"
+        mi_label = "极易维护 ✅"
     elif mi >= 65:
-        mi_label = "Moderately maintainable 🔶"
+        mi_label = "中等可维护 🔶"
     elif mi >= 50:
-        mi_label = "Difficult to maintain ⚠️"
+        mi_label = "较难维护 ⚠️"
     else:
-        mi_label = "Very difficult to maintain ❌"
+        mi_label = "很难维护 ❌"
     print(f"    → {mi_label}")
 
-    print("\n📐 FUNCTION METRICS")
+    print("\n📐 函数指标")
     print("-" * 40)
-    print(f"  Avg Function Length:    {metrics.avg_function_length} lines")
-    print(f"  Max Function Length:    {metrics.max_function_length} lines")
+    print(f"  平均函数长度:            {metrics.avg_function_length} 行")
+    print(f"  最大函数长度:            {metrics.max_function_length} 行")
 
     if verbose and metrics.functions:
-        print("\n📋 FUNCTION DETAILS")
+        print("\n📋 函数明细")
         print("-" * 40)
         for f in sorted(metrics.functions, key=lambda x: x.cyclomatic_complexity, reverse=True):
             flag = " ⚠️" if f.cyclomatic_complexity > 10 or f.lines > 50 else ""
-            print(f"  {f.name}() [lines {f.start_line}-{f.end_line}]{flag}")
-            print(f"    - Lines: {f.lines}, CC: {f.cyclomatic_complexity}, "
-                  f"Cognitive: {f.cognitive_complexity}, Params: {f.parameter_count}")
+            print(f"  {f.name}() [行 {f.start_line}-{f.end_line}]{flag}")
+            print(f"    - 行数: {f.lines}, CC: {f.cyclomatic_complexity}, "
+                  f"认知: {f.cognitive_complexity}, 参数: {f.parameter_count}")
 
     print("\n" + "=" * 60)
 
 
 def print_comparison(before: FileMetrics, after: FileMetrics) -> None:
-    """Print comparison between two analyses."""
+    """打印两次分析结果的对比。"""
     print("=" * 70)
-    print("CODE COMPLEXITY COMPARISON")
+    print("代码复杂度对比")
     print("=" * 70)
 
-    print(f"\n{'Metric':<30} {'Before':<15} {'After':<15} {'Change':<10}")
+    print(f"\n{'指标':<30} {'重构前':<15} {'重构后':<15} {'变化':<10}")
     print("-" * 70)
 
     def fmt_change(before_val, after_val, lower_is_better=True):
@@ -391,14 +391,14 @@ def print_comparison(before: FileMetrics, after: FileMetrics) -> None:
         return f"{diff:+.1f} {symbol}" if isinstance(diff, float) else f"{diff:+d} {symbol}"
 
     metrics = [
-        ("Lines of Code", before.lines_of_code, after.lines_of_code, True),
-        ("Function Count", before.function_count, after.function_count, False),
-        ("Class Count", before.class_count, after.class_count, False),
-        ("Cyclomatic Complexity", before.cyclomatic_complexity, after.cyclomatic_complexity, True),
-        ("Cognitive Complexity", before.cognitive_complexity, after.cognitive_complexity, True),
-        ("Maintainability Index", before.maintainability_index, after.maintainability_index, False),
-        ("Avg Function Length", before.avg_function_length, after.avg_function_length, True),
-        ("Max Function Length", before.max_function_length, after.max_function_length, True),
+        ("代码行数", before.lines_of_code, after.lines_of_code, True),
+        ("函数数量", before.function_count, after.function_count, False),
+        ("类数量", before.class_count, after.class_count, False),
+        ("圈复杂度", before.cyclomatic_complexity, after.cyclomatic_complexity, True),
+        ("认知复杂度", before.cognitive_complexity, after.cognitive_complexity, True),
+        ("可维护性指数", before.maintainability_index, after.maintainability_index, False),
+        ("平均函数长度", before.avg_function_length, after.avg_function_length, True),
+        ("最大函数长度", before.max_function_length, after.max_function_length, True),
     ]
 
     for name, b_val, a_val, lower_better in metrics:
@@ -407,40 +407,40 @@ def print_comparison(before: FileMetrics, after: FileMetrics) -> None:
 
     print("\n" + "=" * 70)
 
-    # Overall assessment
-    print("\n🎯 ASSESSMENT")
+    # 总体评估
+    print("\n🎯 评估")
     print("-" * 40)
 
     improvements = 0
     regressions = 0
 
     if after.maintainability_index > before.maintainability_index:
-        print("  ✅ Maintainability improved")
+        print("  ✅ 可维护性提升")
         improvements += 1
     elif after.maintainability_index < before.maintainability_index:
-        print("  ⚠️ Maintainability decreased")
+        print("  ⚠️ 可维护性下降")
         regressions += 1
 
     if after.cyclomatic_complexity < before.cyclomatic_complexity:
-        print("  ✅ Complexity reduced")
+        print("  ✅ 复杂度降低")
         improvements += 1
     elif after.cyclomatic_complexity > before.cyclomatic_complexity:
-        print("  ⚠️ Complexity increased")
+        print("  ⚠️ 复杂度上升")
         regressions += 1
 
     if after.avg_function_length < before.avg_function_length:
-        print("  ✅ Functions are smaller on average")
+        print("  ✅ 函数平均更短")
         improvements += 1
     elif after.avg_function_length > before.avg_function_length:
-        print("  ⚠️ Functions grew larger on average")
+        print("  ⚠️ 函数平均变长")
         regressions += 1
 
-    print(f"\n  Summary: {improvements} improvements, {regressions} regressions")
+    print(f"\n  小结: {improvements} 项改善, {regressions} 项退步")
     print("=" * 70)
 
 
 def analyze_directory(directory: str, verbose: bool = False) -> None:
-    """Analyze all supported files in a directory."""
+    """分析目录下所有支持的文件。"""
     supported_extensions = ['.py', '.js', '.jsx', '.ts', '.tsx']
     files = []
 
@@ -450,10 +450,10 @@ def analyze_directory(directory: str, verbose: bool = False) -> None:
                 files.append(os.path.join(root, filename))
 
     if not files:
-        print(f"No supported files found in {directory}")
+        print(f"在 {directory} 中未找到支持的文件")
         return
 
-    print(f"Analyzing {len(files)} files in {directory}...\n")
+    print(f"正在分析 {directory} 中的 {len(files)} 个文件...\n")
 
     total_loc = 0
     total_cc = 0
@@ -477,37 +477,37 @@ def analyze_directory(directory: str, verbose: bool = False) -> None:
                 print(f"  {metrics.filename}: LOC={metrics.lines_of_code}, "
                       f"CC={metrics.cyclomatic_complexity}, MI={metrics.maintainability_index}{flag}")
         except Exception as e:
-            print(f"  Error analyzing {filepath}: {e}")
+            print(f"  分析 {filepath} 时出错: {e}")
 
     print("\n" + "=" * 60)
-    print("SUMMARY")
+    print("汇总")
     print("=" * 60)
-    print(f"  Files analyzed:         {len(all_metrics)}")
-    print(f"  Total lines of code:    {total_loc}")
-    print(f"  Total complexity:       {total_cc}")
-    print(f"  Total functions:        {total_functions}")
+    print(f"  已分析文件数:            {len(all_metrics)}")
+    print(f"  代码总行数:              {total_loc}")
+    print(f"  总复杂度:                {total_cc}")
+    print(f"  函数总数:                {total_functions}")
 
     if all_metrics:
         avg_mi = sum(m.maintainability_index for m in all_metrics) / len(all_metrics)
-        print(f"  Avg maintainability:    {avg_mi:.1f}")
+        print(f"  平均可维护性:            {avg_mi:.1f}")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Analyze code complexity metrics',
+        description='分析代码复杂度指标',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Examples:
-  %(prog)s myfile.py                    Analyze single file
-  %(prog)s before.py after.py           Compare two versions
-  %(prog)s --dir src/                   Analyze directory
-  %(prog)s -v myfile.py                 Verbose output with function details
+示例:
+  %(prog)s myfile.py                    分析单个文件
+  %(prog)s before.py after.py           对比两个版本
+  %(prog)s --dir src/                   分析目录
+  %(prog)s -v myfile.py                 详细输出（含函数明细）
         """
     )
-    parser.add_argument('files', nargs='*', help='File(s) to analyze')
-    parser.add_argument('--dir', '-d', help='Directory to analyze')
-    parser.add_argument('--verbose', '-v', action='store_true', help='Show detailed function metrics')
-    parser.add_argument('--json', '-j', action='store_true', help='Output as JSON')
+    parser.add_argument('files', nargs='*', help='待分析的文件')
+    parser.add_argument('--dir', '-d', help='待分析的目录')
+    parser.add_argument('--verbose', '-v', action='store_true', help='显示详细的函数指标')
+    parser.add_argument('--json', '-j', action='store_true', help='以 JSON 输出')
 
     args = parser.parse_args()
 

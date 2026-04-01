@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Compare cyclomatic complexity of code before and after changes.
-Helps identify if refactoring actually simplifies code structure.
+比较代码变更前后的圈复杂度。
+用于判断重构是否真正简化了代码结构。
 """
 
 import re
@@ -9,7 +9,7 @@ import sys
 
 
 class ComplexityAnalyzer:
-    """Analyze code complexity metrics."""
+    """分析代码复杂度指标。"""
 
     def __init__(self, code: str):
         self.code = code
@@ -17,12 +17,12 @@ class ComplexityAnalyzer:
 
     def calculate_cyclomatic_complexity(self) -> int:
         """
-        Calculate cyclomatic complexity using McCabe's method.
-        Count decision points: if, elif, else, for, while, except, and, or
+        使用 McCabe 方法计算圈复杂度。
+        统计决策点：if、elif、else、for、while、except、and、or
         """
-        complexity = 1  # Base complexity
+        complexity = 1  # 基础复杂度
 
-        # Count decision points
+        # 统计决策点
         decision_patterns = [
             r"\bif\b",
             r"\belif\b",
@@ -41,21 +41,21 @@ class ComplexityAnalyzer:
 
     def calculate_cognitive_complexity(self) -> int:
         """
-        Calculate cognitive complexity - how hard is it to understand?
-        Based on nesting depth and control flow.
+        计算认知复杂度——代码有多难理解？
+        基于嵌套深度与控制流。
         """
         cognitive = 0
         nesting_depth = 0
 
         for line in self.lines:
-            # Track nesting depth
+            # 跟踪嵌套深度
             if re.search(r"^\s*(if|for|while|def|class|try)\b", line):
                 nesting_depth += 1
                 cognitive += nesting_depth
             elif re.search(r"^\s*(elif|else|except|finally)\b", line):
                 cognitive += nesting_depth
 
-            # Reduce nesting when unindenting
+            # 取消缩进时降低嵌套
             if line and not line[0].isspace():
                 nesting_depth = 0
 
@@ -63,17 +63,17 @@ class ComplexityAnalyzer:
 
     def calculate_maintainability_index(self) -> float:
         """
-        Maintainability Index ranges from 0-100.
-        > 85: Excellent
-        > 65: Good
-        > 50: Fair
-        < 50: Poor
+        可维护性指数范围为 0–100。
+        > 85：优秀
+        > 65：良好
+        > 50：一般
+        < 50：较差
         """
         lines = len(self.lines)
         cyclomatic = self.calculate_cyclomatic_complexity()
         cognitive = self.calculate_cognitive_complexity()
 
-        # Simplified MI calculation
+        # 简化的 MI 计算
         mi = (
             171
             - 5.2 * (cyclomatic / lines)
@@ -84,7 +84,7 @@ class ComplexityAnalyzer:
         return max(0, min(100, mi))
 
     def get_complexity_report(self) -> dict:
-        """Generate comprehensive complexity report."""
+        """生成完整的复杂度报告。"""
         return {
             "cyclomatic_complexity": self.calculate_cyclomatic_complexity(),
             "cognitive_complexity": self.calculate_cognitive_complexity(),
@@ -99,7 +99,7 @@ class ComplexityAnalyzer:
 
 
 def compare_files(before_file: str, after_file: str) -> None:
-    """Compare complexity metrics between two code versions."""
+    """比较两个代码版本的复杂度指标。"""
 
     with open(before_file) as f:
         before_code = f.read()
@@ -114,24 +114,24 @@ def compare_files(before_file: str, after_file: str) -> None:
     after_metrics = after_analyzer.get_complexity_report()
 
     print("=" * 60)
-    print("CODE COMPLEXITY COMPARISON")
+    print("代码复杂度对比")
     print("=" * 60)
 
-    print("\nBEFORE:")
-    print(f"  Cyclomatic Complexity:    {before_metrics['cyclomatic_complexity']}")
-    print(f"  Cognitive Complexity:     {before_metrics['cognitive_complexity']}")
-    print(f"  Maintainability Index:    {before_metrics['maintainability_index']}")
-    print(f"  Lines of Code:            {before_metrics['lines_of_code']}")
-    print(f"  Avg Line Length:          {before_metrics['avg_line_length']}")
+    print("\n变更前：")
+    print(f"  圈复杂度：                {before_metrics['cyclomatic_complexity']}")
+    print(f"  认知复杂度：              {before_metrics['cognitive_complexity']}")
+    print(f"  可维护性指数：            {before_metrics['maintainability_index']}")
+    print(f"  代码行数：                {before_metrics['lines_of_code']}")
+    print(f"  平均行长度：              {before_metrics['avg_line_length']}")
 
-    print("\nAFTER:")
-    print(f"  Cyclomatic Complexity:    {after_metrics['cyclomatic_complexity']}")
-    print(f"  Cognitive Complexity:     {after_metrics['cognitive_complexity']}")
-    print(f"  Maintainability Index:    {after_metrics['maintainability_index']}")
-    print(f"  Lines of Code:            {after_metrics['lines_of_code']}")
-    print(f"  Avg Line Length:          {after_metrics['avg_line_length']}")
+    print("\n变更后：")
+    print(f"  圈复杂度：                {after_metrics['cyclomatic_complexity']}")
+    print(f"  认知复杂度：              {after_metrics['cognitive_complexity']}")
+    print(f"  可维护性指数：            {after_metrics['maintainability_index']}")
+    print(f"  代码行数：                {after_metrics['lines_of_code']}")
+    print(f"  平均行长度：              {after_metrics['avg_line_length']}")
 
-    print("\nCHANGES:")
+    print("\n变化：")
     cyclomatic_change = (
         after_metrics["cyclomatic_complexity"] - before_metrics["cyclomatic_complexity"]
     )
@@ -143,32 +143,32 @@ def compare_files(before_file: str, after_file: str) -> None:
     )
     loc_change = after_metrics["lines_of_code"] - before_metrics["lines_of_code"]
 
-    print(f"  Cyclomatic Complexity:    {cyclomatic_change:+d}")
-    print(f"  Cognitive Complexity:     {cognitive_change:+d}")
-    print(f"  Maintainability Index:    {mi_change:+.2f}")
-    print(f"  Lines of Code:            {loc_change:+d}")
+    print(f"  圈复杂度：                {cyclomatic_change:+d}")
+    print(f"  认知复杂度：              {cognitive_change:+d}")
+    print(f"  可维护性指数：            {mi_change:+.2f}")
+    print(f"  代码行数：                {loc_change:+d}")
 
-    print("\nASSESSMENT:")
+    print("\n评估：")
     if mi_change > 0:
-        print("  ✅ Code is MORE maintainable")
+        print("  ✅ 代码更易维护")
     elif mi_change < 0:
-        print("  ⚠️  Code is LESS maintainable")
+        print("  ⚠️  代码更难维护")
     else:
-        print("  ➡️  Maintainability unchanged")
+        print("  ➡️  可维护性无变化")
 
     if cyclomatic_change < 0:
-        print("  ✅ Complexity DECREASED")
+        print("  ✅ 复杂度降低")
     elif cyclomatic_change > 0:
-        print("  ⚠️  Complexity INCREASED")
+        print("  ⚠️  复杂度上升")
     else:
-        print("  ➡️  Complexity unchanged")
+        print("  ➡️  复杂度无变化")
 
     print("=" * 60)
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python compare-complexity.py <before_file> <after_file>")
+        print("用法：python compare-complexity.py <before_file> <after_file>")
         sys.exit(1)
 
     compare_files(sys.argv[1], sys.argv[2])

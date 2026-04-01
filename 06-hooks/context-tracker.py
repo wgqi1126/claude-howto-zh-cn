@@ -102,12 +102,12 @@ def handle_stop(data: dict) -> None:
 
     # 报告用量（stderr，避免干扰钩子标准输出）
     print(
-        f"上下文（估算）：约 {current_tokens:,} tokens "
+        f"上下文（估算）：约 {current_tokens:,} 个 token "
         f"（已用 {percentage:.1f}%，约剩余 {remaining:,}）",
         file=sys.stderr,
     )
     if delta_tokens > 0:
-        print(f"本次请求：约 {delta_tokens:,} tokens", file=sys.stderr)
+        print(f"本次请求：约 {delta_tokens:,} 个 token", file=sys.stderr)
 
 
 def main():
