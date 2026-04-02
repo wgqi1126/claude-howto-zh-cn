@@ -150,7 +150,7 @@ jobs:
             GIT_COMMITTER_EMAIL="41898282+github-actions[bot]@users.noreply.github.com" \
             git commit -m "维护(同步): 更新上游状态"
 
-            git push origin "$STATE_BRANCH"
+            git push origin "HEAD:$STATE_BRANCH"
           )
 
           git worktree remove --force "$state_worktree"
