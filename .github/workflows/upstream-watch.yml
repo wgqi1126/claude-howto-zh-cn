@@ -117,31 +117,43 @@ jobs:
         if: always()
         run: |
           cp "$STATE_FILE" /tmp/upstream-state.json
+          state_worktree="/tmp/sync-state-worktree"
+          rm -rf "$state_worktree"
 
           if git ls-remote --exit-code --heads origin "$STATE_BRANCH" >/dev/null 2>&1; then
             git fetch origin "$STATE_BRANCH"
-            git switch -C "$STATE_BRANCH" "origin/$STATE_BRANCH"
+            git worktree add --force "$state_worktree" "origin/$STATE_BRANCH"
           else
-            git switch --orphan "$STATE_BRANCH"
-            git rm -rf . >/dev/null 2>&1 || true
+            git worktree add --detach "$state_worktree"
+            (
+              cd "$state_worktree"
+              git switch --orphan "$STATE_BRANCH"
+              git rm -rf . >/dev/null 2>&1 || true
+            )
           fi
 
-          mkdir -p "$(dirname "$STATE_FILE")"
-          cp /tmp/upstream-state.json "$STATE_FILE"
-          git add "$STATE_FILE"
+          mkdir -p "$state_worktree/$(dirname "$STATE_FILE")"
+          cp /tmp/upstream-state.json "$state_worktree/$STATE_FILE"
 
-          if git diff --cached --quiet; then
-            echo "状态文件已是最新。"
-            exit 0
-          fi
+          (
+            cd "$state_worktree"
+            git add "$STATE_FILE"
 
-          GIT_AUTHOR_NAME="github-actions[bot]" \
-          GIT_AUTHOR_EMAIL="41898282+github-actions[bot]@users.noreply.github.com" \
-          GIT_COMMITTER_NAME="github-actions[bot]" \
-          GIT_COMMITTER_EMAIL="41898282+github-actions[bot]@users.noreply.github.com" \
-          git commit -m "维护(同步): 更新上游状态"
+            if git diff --cached --quiet; then
+              echo "状态文件已是最新。"
+              exit 0
+            fi
 
-          git push origin "$STATE_BRANCH"
+            GIT_AUTHOR_NAME="github-actions[bot]" \
+            GIT_AUTHOR_EMAIL="41898282+github-actions[bot]@users.noreply.github.com" \
+            GIT_COMMITTER_NAME="github-actions[bot]" \
+            GIT_COMMITTER_EMAIL="41898282+github-actions[bot]@users.noreply.github.com" \
+            git commit -m "维护(同步): 更新上游状态"
+
+            git push origin "$STATE_BRANCH"
+          )
+
+          git worktree remove --force "$state_worktree"
 
       - name: 写入执行摘要
         if: always()
