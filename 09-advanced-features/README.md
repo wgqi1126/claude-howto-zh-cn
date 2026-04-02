@@ -34,7 +34,7 @@ Claude Code 高级能力全面指南，涵盖 Planning Mode（规划模式）、
 21. [托管设置（企业版）](#managed-settings-enterprise)
 22. [配置与设置](#configuration-and-settings)
 23. [最佳实践](#best-practices)
-24. [相关资源](#related-concepts)
+24. [相关资源](#additional-resources)
 
 ---
 
@@ -1878,6 +1878,7 @@ User: /config
 ---
 
 <a id="related-concepts"></a>
+<a id="additional-resources"></a>
 ## 相关资源
 
 更多关于 Claude Code 及相关功能的信息：

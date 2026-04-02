@@ -325,7 +325,7 @@ my-plugin/
   "author": {
     "name": "Anthropic"
   },
-  "repository": "https://github.com/anthropic/pr-review",
+  "repository": "https://github.com/your-org/pr-review",
   "license": "MIT"
 }
 ```

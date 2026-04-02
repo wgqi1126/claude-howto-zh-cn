@@ -15,7 +15,7 @@ This file explains how to report security vulnerabilities to the Claude How To p
 This is the preferred method for reporting security vulnerabilities.
 
 **Steps:**
-1. Go to: https://github.com/luongnv89/claude-howto/security/advisories
+1. Go to: https://github.com/wgqi1126/claude-howto-zh-cn/security/advisories
 2. Click "Report a vulnerability"
 3. Fill in the details (use template below)
 4. Submit
@@ -30,7 +30,7 @@ This is the preferred method for reporting security vulnerabilities.
 
 If you discover a vulnerability in a dependency:
 
-1. Go to: https://github.com/luongnv89/claude-howto/security/dependabot/alerts
+1. Go to: https://github.com/wgqi1126/claude-howto-zh-cn/security/advisories
 2. Review the alert
 3. Create a pull request with the fix
 4. Tag with `security` label
