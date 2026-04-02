@@ -2,7 +2,7 @@
   "upstream_repo": "luongnv89/claude-howto",
   "upstream_branch": "main",
   "last_seen_upstream_sha": "6d1e0ae4afbb95305e10d414ae90fcf3d74b9c4e",
-  "last_synced_upstream_sha": "2790fb2b17bffc907f20cec8347effaed011e275",
+  "last_synced_upstream_sha": "6d1e0ae4afbb95305e10d414ae90fcf3d74b9c4e",
   "last_alerted_upstream_sha": "6d1e0ae4afbb95305e10d414ae90fcf3d74b9c4e",
-  "sync_status": "pending"
+  "sync_status": "idle"
 }
